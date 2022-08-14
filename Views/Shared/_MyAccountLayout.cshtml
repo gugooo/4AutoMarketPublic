@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewData["Title"] = "My Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    @RenderSection("Style", false)
+    <style>
+        .MyAccountNav > a {
+            text-align: center;
+            color: black;
+            min-width: 150px;
+            margin: 10px;
+        }
+
+            .MyAccountNav > a > img {
+                height: 35px;
+            }
+
+        .MyAccountNav a {
+            box-shadow: rgba(0,0,0,0.2) 3px 3px 5px 0;
+        }
+
+            .MyAccountNav a.active {
+                box-shadow: rgba(0,0,0,0.2) 0 0 5px 0;
+            }
+    </style>
+}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-12 pb-3 border-bottom">
+            <div class="row MyAccountNav justify-content-around justify-content-md-start">
+                <a asp-action="MyAccount" asp-controller="Account" class="col-5 col-md-auto btn btn-light @ViewBag.Account">
+                    <img src="~/Icons/MyAccount/Person.png" /><br />
+                    Account overview
+                </a>
+                <a asp-action="AddressBook" asp-controller="Account" class="col-5 col-md-auto btn btn-light @ViewBag.Address">
+                    <img src="~/Icons/MyAccount/Address-book.png" /><br />
+                    Address book
+                </a>
+                <a asp-action="OrderHistory" asp-controller="Account" class="col-5 col-md-auto btn btn-light @ViewBag.Order">
+                    <img src="~/Icons/MyAccount/Shopping-bag.png" /><br />
+                    Order history
+                </a>
+                <a asp-action="Messages" asp-controller="Account" class="col-5 col-md-auto btn btn-light @ViewBag.Messages">
+                    <img src="~/Icons/MyAccount/Mail.png" /><br />
+                    Messages
+                </a>
+            </div>
+        </div>
+    </div>
+    @RenderBody()
+</div>
+@section Scripts{
+    @RenderSection("Scripts", false);
+}

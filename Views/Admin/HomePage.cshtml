@@ -1,0 +1,191 @@
+﻿@model _4AutoMarket.ViewModels.Admin.HomePageSectionsView;
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Style{
+    <style>
+        .AdProductImgListSmall {
+            height: 38px;
+            width: 26px;
+            float: right;
+        }
+
+            .AdProductImgListSmall > div {
+                height: 36px;
+                width: 24px;
+                border: 1px solid rgb(100,100,100);
+                overflow: hidden;
+                margin: 0 5px;
+                vertical-align: unset;
+            }
+
+                .AdProductImgListSmall > div > img {
+                    height: 36px;
+                }
+    </style>
+}
+
+<h3>HomePage</h3>
+
+<div class="row">
+    <form class="form-row m-2" method="post" asp-controller="Admin" asp-action="HomePage" enctype="multipart/form-data">
+        @for (int i = 0; i < Model.Sections.Count(); i++)
+        {
+            var section = Model.Sections.ElementAt(i);
+
+            <h3>@(section.SectionName)</h3>
+            <input type="hidden" name="Req.Sections[@i].Id" value="@(section.Id ?? "")" />
+            <input type="hidden" name="Req.Sections[@i].IsFixedData" value="@(section.IsFixedData.ToString())" />
+            <input type="hidden" name="Req.Sections[@i].SectionName" value="@(section.SectionName.ToString())" />
+            <div class="col-12  border p-2 m-2 rounded">
+                <div class="row m-0">
+                    <div class="col-auto pl-0">
+                        <input type="text" class="form-control text-center" value="@(section.Position)" name="Req.Sections[@i].Position" placeholder="#" style="width:50px;" />
+                    </div>
+                    <div class="col-auto">
+                        <label class="text-center m-0">View <br />@Html.CheckBox($"Req.Sections[{i}].IsActive", section.IsActive, new { @class = "form-check-inline m-0" })</label>
+                    </div>
+                    @{ int j = 0;}
+                    @for (; j < section.SectionDatas.Count(); j++)
+                    {
+                        var sectionData = section.SectionDatas.ElementAt(j);
+                        <div class="row m-0 mt-1 w-100">
+                            <input type="hidden" name="Req.Sections[@i].SectionDatas[@j].Id" value="@(sectionData?.Id ?? "")" />
+                            @if (!section.IsFixedData && j != 0)
+                            {@Html.Hidden("Req.Sections[" + i + "].SectionDatas[" + j + "].IsDelete", "false", new { @class = "AdIsDelete" });
+                        }
+                            <!--<input class="AdIsDelete" value="false" type="hidden" name="Req.Sections[@@i].SectionDatas[@@j].IsDelete" />-->
+                            <div class="col-auto pl-0">
+                                <div style="height:38px;">
+                                    <button type="button" class="btn btn-outline-info" onclick="$(this).find('~input.AdProductInputImg').click()" @(i == 6 ? "disabled" : "")>
+                                        <img src="~/Icons/Admin/Folder.png" height="20" />
+                                    </button>
+                                    <input class="d-none AdProductInputImg" type="file" accept="image/jpeg,image/png" name="Req.Imgs_@(i)" onchange="$(this).siblings('input').val(@j)" />
+                                    <input type="hidden" name="Req.ChangedImgs[@i][]" />
+                                    <div class="AdProductImgListSmall">
+                                    </div>
+                                </div>
+                                @if (i == 0)
+                                {<small>1900x475</small>}
+                                else if (i == 1)
+                                { <small>1100x440</small>}
+                                else if (i == 2)
+                                { <small> 200x400</small>}
+                                else if (i == 3)
+                                { <small> 550x440</small>}
+                                else if (i == 4 && j == 0)
+                                { <small> 550x440</small>}
+                                else if (i == 4 && j > 0)
+                                { <small> 550x215</small>}
+                                else if (i == 5 && j == 0)
+                                { <small> 340x340</small>}
+                                else if (i == 5 && j > 0)
+                                { <small> 165x165</small>}
+                                else if (i == 5 && j > 0)
+                                { <small> 165x165</small>}
+                            </div>
+                            <div class="col-auto pr-1">
+                                <img src="@(!string.IsNullOrEmpty(sectionData?.ImgID) ? ("/home/GetIndexImg/" + sectionData.ImgID) : "//:0")" height="38" />
+                            </div>
+                            <div class="col p-0">
+                                <input type="text" class="form-control" value="@(sectionData?.Title)" name="Req.Sections[@i].SectionDatas[@j].Title" placeholder="Title" />
+                            </div>
+                            <div class="col pr-0">
+                                <textarea @(!(i == 0 || i == 1) ? "disabled" : "") class="form-control" name="Req.Sections[@i].SectionDatas[@j].Description" placeholder="Description" style="min-height:38px; height:38px;">@(sectionData?.Description)</textarea>
+                            </div>
+                            <div class="col-auto text-center pr-0">
+                                <label>White<br />@Html.CheckBox($"Req.Sections[{i}].SectionDatas[{j}].TextIsWhith", sectionData?.TextIsWhith, new { @class = "form-check-inline m-0" })</label>
+                            </div>
+                            <div class="col-auto pr-0">
+                                <select class="form-control" name="Req.Sections[@i].SectionDatas[@j].CatalogId" style="max-width:140px;">
+                                    @foreach (var op in (IDictionary<string, string>)ViewBag.CatalogList)
+                                    {
+                                        if (sectionData?.CatalogId != op.Key)
+                                        {
+                                            <option value="@op.Key">@Html.Raw(op.Value)</option>
+                                        }
+                                        else
+                                        {
+                                            <option selected value="@op.Key">@Html.Raw(op.Value)</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            @if (!section.IsFixedData && j != 0)
+                            {<div class="col-auto"><button type="button" class="btn btn-outline-danger AdDeleteSectionDataRow">&#10134;</button></div>}
+                        </div>
+                    }
+                </div>
+                @if (!section.IsFixedData)
+                {<div class="text-center"><button type="button" data-sn="@i" data-sdn="@j" class="btn btn-outline-primary AdAddSectionDataRow">&#10133;</button></div>}
+            </div>
+        }
+        <div class="col-12">
+            <input class="btn btn-outline-primary mt-2 px-4 ml-2" type="submit" value="Save" />
+        </div>
+    </form>
+
+</div>
+
+@section Scripts{
+    <script>
+    function ImgChange(th) {
+        if (th.files) {
+            $(th).siblings('.AdProductImgListSmall').empty();
+            var currentInput = th;
+            $.each(th.files, function (i, val) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $(currentInput).siblings('.AdProductImgListSmall').append("<div><img src=" + e.target.result + " /></div>");
+                }
+                reader.readAsDataURL(val); // convert to base64 string
+            });
+        }
+    }
+    $(document).ready(function () {
+        $(".AdProductInputImg").change(function () { ImgChange(this) });
+
+        $(".AdAddSectionDataRow").click(function () {
+            var i = $(this).data('sn');
+            var j = $(this).data('sdn');
+            var row = $('<div class="row m-0 mt-1 w-100"></div>');
+            var inputHideSD_ID = $('<input type="hidden" name="Req.Sections[' + i + '].SectionDatas[' + j + '].Id" value="new" />');
+            var inputHideSD_IsDelete = $('<input class="AdIsDelete" type="hidden" name="Req.Sections[' + i + '].SectionDatas[' + j + '].IsDelete" />');
+            row.append(inputHideSD_ID);
+            row.append(inputHideSD_IsDelete);
+
+            var imgWrap = $('<div class="col-auto pl-0"></div>');
+
+            var imgWrap2 = $('<div style="height:38px;"></div>');
+            var ImgButton = $('<button type="button" onclick="$(this).find(&apos;~input.AdProductInputImg&apos;).click();" class="btn btn-outline-info"' + (i == 6 ? "disabled" : "") + '><img src="/Icons/Admin/Folder.png" height="20" /></button>');
+            imgWrap2.append(ImgButton);
+            var ImgFile = $('<input onchange="$(this).siblings(&apos;input&apos;).val(' + j + '); ImgChange(this);" class="d-none AdProductInputImg" type="file" accept="image/jpeg,image/png" name="Req.Imgs_' + i + '" />');
+            imgWrap2.append(ImgFile);
+            imgWrap2.append('<input type="hidden" name="Req.ChangedImgs[' + i + '][]" /><div class="AdProductImgListSmall"></div>');
+            imgWrap.append(imgWrap2);
+            imgWrap.append( i ? '<small> 200x400</small>' : '<small>1900x475</small>');
+            row.append(imgWrap);
+            row.append('<div class="col-auto pr-1"><img src="//:0" height="38" /></div>');
+            row.append('<div class="col p-0"><input type="text" class="form-control" name="Req.Sections[' + i + '].SectionDatas[' + j + '].Title" placeholder="Title" /></div>');
+            row.append('<div class="col pr-0"><textarea ' + (i ? "disabled" : "") + 'class="form-control" name="Req.Sections[' + i + '].SectionDatas[' + j + '].Description" placeholder="Description" style="min-height:38px; height:38px;"></textarea></div>');
+            row.append('<div class="col-auto text-center pr-0"><label>White<br><input class="form-check-inline m-0" id="Req_Sections_' + i + '__SectionDatas_' + j + '__TextIsWhith" name="Req.Sections[' + i + '].SectionDatas[' + j + '].TextIsWhith" type="checkbox" value="true"></label></div>');
+            var select = $('<select class="form-control" name="Req.Sections[' + i + '].SectionDatas[' + j + '].CatalogId" style="max-width:140px;"></select>');
+            select.append($(this).parent().siblings('.row').find('select').first().find('option').clone());
+            var selectWrap = $('<div class="col-auto pr-0"></div>');
+            selectWrap.append(select);
+            row.append(selectWrap);
+            row.append('<div class="col-auto pr-0"><button type="button" class="btn btn-outline-danger AdDeleteSectionDataRow">&#10134;</button></div>');
+            $(this).data('sdn', j + 1);
+            $(this).parent().siblings('.row').append(row);
+        });
+
+        $(".AdDeleteSectionDataRow").click(function () {
+            var input = $(this).closest('.row').find('.AdIsDelete');
+            input.val(input.val() == 'false' ? 'true' : 'false');
+            $(this).toggleClass('bg-danger');
+        });
+    });
+    </script>
+}

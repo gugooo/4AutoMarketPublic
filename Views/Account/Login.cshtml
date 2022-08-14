@@ -1,0 +1,40 @@
+﻿@model _4AutoMarket.ViewModels.LoginViewModel
+@{
+    Layout = null;
+}
+<form asp-action="Login" asp-controller="Account" method="post" asp-antiforgery="true" id="loginForm">
+    <div class="form-row justify-content-center text-left">
+        <div asp-validation-summary="ModelOnly" class="text-danger col-12 col-md-8"></div>
+        <div class="text-danger col-12 col-md-8" id="loginFormVal"></div>
+        <div class="form-group col-12 col-md-8">
+            <label asp-for="LoginEmail" class="control-label"></label>
+            <input asp-for="LoginEmail" class="form-control InputStyle" />
+            <span asp-validation-for="LoginEmail" class="text-danger"></span>
+        </div>
+        <div class="form-group col-12 col-md-8">
+            <label asp-for="LoginPassword" class="control-label"></label>
+            <input asp-for="LoginPassword" class="form-control InputStyle" />
+            <span asp-validation-for="LoginPassword" class="text-danger"></span>
+        </div>
+        <div class="form-group form-check col-12 col-md-8">
+            <label class="form-check-label"><input class="form-check-inline ml-1" asp-for="Remember" />@Html.DisplayNameFor(model => model.Remember)</label>
+            <a class="float-right LinkStyle" href="javascript:void(0);" onclick="$('#loginForm').addClass('d-none'); $('#fogotForm').removeClass('d-none');">@Localizer["ForgotPassword"]</a>
+        </div>
+        <div class="col-12 col-md-8 text-center my-4">
+            <a href="javascript:void(0);" onclick="facebookLogin()" class="mr-2 d-inline-block ImgHover">
+                <img src="~/Icons/FacebookLogo.png" height="30" />
+            </a>
+            <a href="javascript:void(0);" onclick="googleLogin()" class="ml-2 d-inline-block ImgHover">
+                <img src="~/Icons/GmailLogo.png" height="30" />
+            </a>
+        </div>
+        <div class="form-group col-8">
+            <input type="submit" value="@Localizer["SignInBtn"]" class="btn btn-primary btn-block" />
+        </div>
+    </div>
+</form>
+@section Scripts{
+
+}
+@{ await Html.RenderPartialAsync("~/Views/Account/ForgotPassword.cshtml");}
+

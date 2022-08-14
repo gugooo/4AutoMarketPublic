@@ -1,0 +1,123 @@
+﻿
+@{
+    ViewData["Title"] = "Atribute";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Style{
+    <style>
+        .AdAtributeList ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+            .AdAtributeList ul li {
+                position: relative;
+            }
+
+            .AdAtributeList ul ul {
+                padding-left: 15px;
+            }
+
+            .AdAtributeList ul > li > a {
+                display: inline-block;
+                width: 100%;
+                color: #132E6D;
+                line-height: 25px;
+                padding-left: 10px;
+                padding-right: 15px;
+                text-decoration: none;
+            }
+
+                .AdAtributeList ul > li > a:hover {
+                    background-color: rgb(242,242,242);
+                }
+
+        .AdAtributeList .HaveSection:before {
+            content: '\2B9F';
+            display: inline-block;
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 25px;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-4 AdAtributeList">
+        <form method="post" asp-action="Atribute" asp-controller="Admin">
+            <h3 class="mb-4">Atribute</h3>
+            <div class="row text-center m-0">
+                <div class="col-3 p-0"><button type="submit" onclick="$('#AdMetod').val('Add')" class="btn btn-outline-success AdAdd">&#10133;</button></div>
+                <div class="col-3 p-0"><button type="submit" onclick="$('#AdMetod').val('Change')" class="btn btn-outline-secondary AdDisable" disabled>&#9998;</button></div>
+                <div class="col-3 p-0"><button type="submit" onclick="$('#AdMetod').val('View')" class="btn btn-outline-secondary AdDisable AdView" disabled>&#128065;</button></div>
+                <div class="col-3 p-0"><button type="submit" onclick="$('#AdMetod').val('Delete')" class="btn btn-outline-danger AdDisable" disabled>&#10134;</button></div>
+            </div>
+            <input class="form-control mt-3" type="text" placeholder="Atribute Name" name="NewName" id="AdNewName" />
+            <input class="form-control mt-3" type="text" placeholder="Atribute Name" name="CultureName" id="AdCultureName" />
+            <input type="hidden" name="CurrentID" id="AdCurrentID" />
+            <input type="hidden" name="Metod" id="AdMetod" />
+            <input type="hidden" name="IsAtribute" id="AdIsAtribute" value="true" />
+        </form>
+        <ul class="mt-3">
+            @if ((IEnumerable<Atribute>)ViewBag.AtributesList != null)
+            {
+                @foreach (var el in (IEnumerable<Atribute>)ViewBag.AtributesList)
+                {
+                    string CName = el.CultureName?.FirstOrDefault(_ => _.Culture == (string)ViewBag.Culture)?.Text;
+                    <li @(el.Values != null && el.Values.Count > 0 ? "class=HaveSection" : "")>
+                        <a @(el.IsActive ? "" : "class=text-danger") href='javascript:void(0)' data-id="@el.Id" data-cultur="@CName">@el.Name</a>
+                        <ul class="d-none">
+                            @if (el.Values != null)
+                            {
+                                @foreach (var va in (IEnumerable<AtributeValue>)el.Values.OrderBy(_ => _._Index))
+                                {
+                                    CName = va.CultureName?.FirstOrDefault(_ => _.Culture == (string)ViewBag.Culture)?.Text;
+                                    <li><a href='javascript:void(0)' data-id="@va.Id" data-cultur='@CName'>@va.Value</a></li>
+                                }
+                            }
+                        </ul>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+    $(document).ready(function () {
+        $(".AdAtributeList ul > li > a").click(function () {
+            $('.AdAtributeList button').prop('disabled', false);
+            $('#AdIsAtribute').val('true');
+                if ($(this).hasClass('font-weight-bold')) {
+                    $(this).removeClass('font-weight-bold');
+                    $('#AdCurrentID').val('');
+                    $('#AdNewName').val('');
+                    $('#AdCultureName').val('');
+                    $('.AdAtributeList button.AdDisable').prop('disabled', true);
+                }
+                else {
+                    $('.AdAtributeList ul > li > a.font-weight-bold').removeClass('font-weight-bold');
+                    $(this).addClass('font-weight-bold');
+                    $('#AdCurrentID').val($(this).data('id'));
+                    $('#AdNewName').val($(this).text());
+                    $('#AdCultureName').val($(this).data('cultur'));
+                    $('.AdAtributeList button.AdDisable').prop('disabled', false);
+                }
+        });
+
+         $(".AdAtributeList ul > li.HaveSection > a").click(function () {
+                $(this).siblings('ul').toggleClass('d-none');
+         });
+
+        $('.AdAtributeList ul ul a').click(function () {
+            if ($(this).hasClass('font-weight-bold')) {
+                $('.AdAtributeList button.AdAdd, button.AdView').prop('disabled', true);
+
+                $('#AdIsAtribute').val('false');
+            }
+        });
+    });
+    </script>
+}

@@ -1,0 +1,76 @@
+﻿@model PromoCodeViewModel
+@{
+    ViewData["Title"] = "Promo";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+
+<div class="row">
+    <div class="col-12">
+        <h3>Promo Code</h3>
+    </div>
+    <div class="col-12">
+        <form method="post" asp-action="Promo" asp-controller="Admin">
+            <div class="text-danger" asp-validation-summary="All"></div>
+            <div class="form-inline mt-3">
+                <div class="form-group">
+                    <input class="form-control" type="date" asp-for="Expired" />
+                </div>
+                <div class="form-group">
+                    <input class="form-control mx-2" type="text" asp-for="Name" placeholder="@Html.NameFor(_ => _.Name)" />
+                </div>
+                <div class="form-group">
+                    <input class="form-control mx-2" type="text" asp-for="Parcent" placeholder="@Html.NameFor(_ => _.Parcent)" />
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="submit" value="Add New Code" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-12 mt-5">
+        <div style="max-height:700px;overflow:auto;">
+            <table id="promoList" class="w-100 text-center">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Sale%</th>
+                        <th>Expered</th>
+                        <th>Is Active</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @{ IEnumerable<PromoCode> prs = (IEnumerable<PromoCode>)ViewBag.PromoCodes; }
+                    @if (prs != null && prs.Count() > 0)
+                    {
+                        foreach (var pr in prs)
+                        {
+                            <tr>
+                                <td>@pr.Name</td>
+                                <td>@(pr.SalePercent.ToString("0.00").Replace(".00", "") + " %")</td>
+                                <td>@pr.Expired.ToShortDateString()</td>
+                                <td><input data-id="@pr.id" type="checkbox" asp-for="@pr.isActive" /></td>
+                                <td><button data-id="@pr.id" type="button" class="btn btn-outline-danger">&#10134;</button></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+    $(document).ready(function () {
+        $('#promoList tbody td input').change(function () {
+            $.post("/Admin/changePromoStatus?id=" + $(this).data('id'));
+        });
+        $('#promoList tbody td button').click(function (e) {
+            $.post("/Admin/deletePromo?id=" + $(this).data('id'), function () { $(e.target).closest('tr').remove(); });
+        });
+    });
+    </script>
+}

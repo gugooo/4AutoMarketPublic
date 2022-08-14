@@ -1,0 +1,387 @@
+﻿/*----------------------------Slider5*/
+.Slider5Wrap {
+    position: relative;
+    height: 430px;
+    max-width: 1180px;
+    overflow: hidden;
+    padding-left: 22px;
+}
+
+    .Slider5Wrap .SliderItem {
+        display: none;
+        text-align: center;
+        height: 430px;
+        width: 200px;
+        overflow: hidden;
+        margin-left: 8px;
+    }
+
+        .Slider5Wrap .SliderItem > img {
+            height: 400px;
+        }
+
+        .Slider5Wrap .SliderItem > a {
+            min-width: 50%;
+            margin-top: -20px;
+            color: rgb(19,46,109);
+            font-weight: bold;
+        }
+
+.books_Wrap {
+    outline: 1px solid rgba(0, 0, 0, 0.25);
+    padding: 30px 0;
+}
+
+    .books_Wrap > h2 {
+        color: rgb(19,46,109);
+        margin-left: 30px;
+        margin-bottom: 20px;
+    }
+
+    .books_Wrap > .Slider5Wrap {
+        height: 320px;
+    }
+
+    .books_Wrap .SliderItem {
+        height: 320px;
+    }
+
+        .books_Wrap .SliderItem a {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            border: none;
+            min-width: initial;
+        }
+
+            .books_Wrap .SliderItem a:hover {
+                opacity: 0.8;
+            }
+
+        .books_Wrap .SliderItem > a img {
+            height: 100%;
+        }
+/*----------------------------Slider*/
+.SliderWrap {
+    position: relative;
+    height: 100%;
+}
+
+    .SliderWrap .SliderItem {
+        display: none;
+        overflow: hidden;
+        height: 475px;
+    }
+
+        .SliderWrap .SliderItem > img {
+            height: 100%;
+        }
+
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    margin-top: -22px;
+    padding: 16px;
+    color: lightgray !important;
+    font-weight: bold;
+    font-size: 18px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+}
+
+.prev {
+    left: 0;
+}
+
+.next {
+    right: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+    .prev:hover, .next:hover {
+        background-color: rgba(0,0,0,0.8);
+    }
+
+.SliderFade {
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 1.5s;
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+    from {
+        opacity: .4
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: .4
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+.SliderItem > div {
+    position: absolute;
+    right: 60px;
+    bottom: 30px;
+    padding: 20px;
+    width: 380px;
+    height: 280px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 0.25em;
+}
+
+    .SliderItem > div > h3 {
+        color: rgb(19,46,109);
+        margin-bottom: 20px;
+    }
+
+    .SliderItem > div > a {
+        font-weight: bold;
+        color: rgb(19,46,109);
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+    }
+/*---------------IMG BOX*/
+.imgBox {
+    position: relative;
+    width: 100%;
+    height: 440px;
+    overflow: hidden;
+}
+
+.halfBox {
+    width: 550px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.fourthBox {
+    display: inline-block;
+    width: 550px;
+    text-align: center;
+    margin-top: 10px;
+    float: right;
+}
+
+.squareBox {
+    position: relative;
+    float: left;
+    margin: 0 5px;
+    height: 360px;
+    width: 360px;
+    padding: 10px;
+    outline: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.squareBox4 {
+    float: left;
+    height: 360px;
+    width: 360px;
+    padding: 5px;
+    margin: 0 5px;
+    outline: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+    .squareBox4 > div {
+        float: left;
+        height: 165px;
+        width: 165px;
+        overflow: hidden;
+        margin: 5px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+        .squareBox4 > div img {
+            height: 165px;
+        }
+
+        .squareBox4 > div > a {
+            display: inline-block;
+        }
+
+        .squareBox4 > div a:hover {
+            opacity: 0.8;
+            text-decoration: none;
+        }
+
+        .squareBox4 > div > a div {
+            margin-top: -30px;
+            font-weight: bold;
+            color: whitesmoke;
+            margin-left: 5px;
+        }
+
+.squareBox .imgWrap {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.squareBox > .imgWrap > img {
+    height: 340px;
+}
+
+.squareBox .SB_textWrap {
+    position: absolute;
+    text-align: center;
+    padding: 5px;
+    bottom: 30px;
+    left: 10px;
+    right: 10px;
+}
+
+.squareBox > .SB_textWrap > a {
+    font-weight: bold !important;
+    color: rgb(19,46,109) !important;
+}
+
+.fourthBox > .imgBox {
+    display: inline-block;
+    height: 215px !important;
+    margin-top: 4px;
+}
+
+.imgBox img {
+    height: 100%;
+}
+
+.imgBox > div {
+    position: absolute;
+    padding: 15px;
+    color: whitesmoke;
+    text-align: center;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+}
+
+    .imgBox > div > a {
+        color: rgb(19,46,109) !important;
+        font-weight: bold;
+    }
+/*------------------Colors*/
+.ImgHover:hover {
+    opacity: 0.8;
+}
+
+@media (max-width: 575.98px) {
+    .SliderWrap .SliderItem {
+        height: 240px;
+    }
+
+        .SliderWrap .SliderItem > div {
+            right: 30px;
+            left: 30px;
+            bottom: 5px;
+            width: auto;
+            height: 100px;
+            padding: 5px;
+            text-align: center;
+        }
+
+            .SliderWrap .SliderItem > div > h3 {
+                margin: 0;
+            }
+
+            .SliderWrap .SliderItem > div > p {
+                margin: 0;
+                max-height: 45px;
+                overflow: hidden;
+            }
+
+            .SliderWrap .SliderItem > div > a {
+                position: static;
+            }
+    /*----------------------------*/
+    .Slider5Wrap {
+        height: 230px;
+        padding-left: 0;
+    }
+
+        .Slider5Wrap .SliderItem {
+            height: 230px;
+            width: 100px;
+            margin-left: 0;
+        }
+
+            .Slider5Wrap .SliderItem > img {
+                height: 200px;
+            }
+
+    .books_Wrap > .Slider5Wrap {
+        height: 160px;
+    }
+
+    .books_Wrap .SliderItem {
+        height: 160px;
+    }
+    /*---------------------------*/
+    .imgBox {
+        height: 220px;
+    }
+
+    .halfBox {
+        width: 275px;
+        float: none !important;
+    }
+
+        .halfBox > div {
+            height: 80px !important;
+        }
+
+    .fourthBox {
+        width: 275px;
+        float: none !important;
+    }
+
+        .fourthBox > .imgBox {
+            height: 107px !important;
+        }
+
+            .fourthBox > .imgBox > div {
+                top: 15px;
+                bottom: 0;
+                height: auto;
+            }
+
+    .imgBox > img {
+        width: auto;
+        height: 100%;
+    }
+
+    .imgBox > div {
+        height: 130px;
+    }
+
+        .imgBox > div > p {
+            max-height: 20px;
+            overflow: hidden;
+        }
+
+    .squareBox {
+        float: none !important;
+        margin: 0 auto !important;
+    }
+
+    .squareBox4 {
+        float: none !important;
+        margin: 10px auto 0 auto !important;
+    }
+}

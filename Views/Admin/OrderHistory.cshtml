@@ -1,0 +1,105 @@
+﻿
+@{
+    ViewData["Title"] = "OrderHistory";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@using System.Globalization;
+@section Style{
+    <style>
+        .MOImgWrap {
+            height: 90px;
+            width: 60px;
+            overflow: hidden;
+            border: 1px solid black;
+            float: left;
+        }
+
+            .MOImgWrap img {
+                height: 90px;
+            }
+
+        .OrderInfo {
+            cursor: pointer
+        }
+    </style>
+}
+
+@{
+    IEnumerable<Order> orders = (IEnumerable<Order>)ViewBag.Orders;
+    OrderFilters filtr = (OrderFilters)ViewBag.Filtr;
+}
+
+<form id="orderHistoryFiltrs" asp-action="OrderHistory" asp-controller="Admin" method="get">
+    <div class="row ml-1 mb-2 p-1 border" style="background-color:rgb(230,230,230);">
+        <div class="form-inline">
+            <div class="form-group mb-2 ml-auto mr-auto">
+                <label asp-for="@filtr.from">From</label>
+                <input class="form-control mx-2" name="from" asp-for="@filtr.from" />
+                <label asp-for="@filtr.to">To</label>
+                <input class="form-control ml-2" name="to" asp-for="@filtr.to" />
+            </div>
+            <div class="input-group mb-2 ml-auto mr-auto">
+
+                <input class="form-control" name="orderNumber" asp-for="@filtr.orderNumber" placeholder="Order#" />
+                <input class="form-control" name="phone" asp-for="@filtr.phone" placeholder="Phone" />
+                <input class="form-control" name="email" asp-for="@filtr.email" placeholder="Email" />
+                <select class="form-control" name="status" asp-items="Html.GetEnumSelectList<Order.StatusType>()" asp-for="@filtr.status"></select>
+                <input class="form-control" type="submit" value="Serch" />
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<div class="row text-center font-weight-bold mb-3 ml-1 mr-0 border-bottom">
+    <div class="col-2">#Order</div>
+    <div class="col-2">Phone</div>
+    <div class="col-2">Email</div>
+    <div class="col-2">Address</div>
+    <div class="col-2">Payed</div>
+    <div class="col-2">Status</div>
+</div>
+@if (orders != null && orders.Count() > 0)
+{
+    <div id="OrdersList" style="max-height:1000px;overflow:auto;">
+        @{ await Html.RenderPartialAsync("OrderHistoryI", orders);}
+    </div>
+    <div id="AdProductListSpiner" class="text-center mt-2 d-none">
+        <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <div class="text-center"><button id="LoadMoreBtn" type="button" class="btn btn-secondary px-4 mt-2">Load More</button></div>
+
+}
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $(".OrderInfo").click(function (e) {
+                if (e.target.tagName!="SELECT")  $(this).siblings("div").toggleClass("d-none");
+            });
+            $(".orderStatusSelect").change(function () {
+                $.post("/Admin/changeOrderStatus?id=" + $(this).data('id') + "&status=" + $(this).val());
+            });
+
+            $("#LoadMoreBtn").click(function () {
+                $("#AdProductListSpiner").removeClass("d-none");
+                var i = $("#LoadMoreBtn").data('i');
+                if (!i && i != 0) {
+                    $("#LoadMoreBtn").data('i', 0);
+                    i = 0;
+                }
+                $.post("/Admin/OrderHistoryI/?Index=" + (i + 1), $("#orderHistoryFiltrs").serialize(), function (data) {
+                    var newOrders = $(data);
+                    newOrders.find('.OrderInfo').click(function (e) { if (e.target.tagName != "SELECT") $(this).siblings("div").toggleClass("d-none"); });
+                    newOrders.find('.orderStatusSelect').change(function () { $.post("/Admin/changeOrderStatus?id=" + $(this).data('id') + "&status=" + $(this).val()); });
+                    $("#OrdersList").append(newOrders);
+                    $("#LoadMoreBtn").data('i', i + 1);
+                    $("#AdProductListSpiner").addClass('d-none');
+                });
+
+            });
+        });
+    </script>
+}

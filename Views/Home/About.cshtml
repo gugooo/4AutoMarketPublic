@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "About";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container py-5">
+    <div class="row TextStyleBlue">
+        <div class="col-12 col-md">
+            <div class="text-center font-weight-bold pb-2" style="font-size:1.5em;">@Localizer["Header"]</div>
+            <div>
+                @Localizer["Section1"]
+            </div>
+        </div>
+        <div class="col-auto d-none d-md-flex pt-5">
+            <img class="d-none" src="~/Imag/About2.png" height="450" />
+        </div>
+    </div>
+    <div class="row TextStyleBlue mt-4 d-none">
+        <div class="col-auto d-none d-md-flex">
+            <img src="~/Imag/About1.png" height="450" />
+        </div>
+        <div class="col-12 col-md">
+            <div>
+                @Localizer["Section2"]
+            </div>
+        </div>
+
+    </div>
+</div>

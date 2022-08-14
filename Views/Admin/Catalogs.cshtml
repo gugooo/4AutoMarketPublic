@@ -1,0 +1,844 @@
+﻿
+@{
+    ViewData["Title"] = "Catalogs";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@section Style{
+    <style>
+        .AdCatalogList ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+            .AdCatalogList ul li {
+                position: relative;
+            }
+
+            .AdCatalogList ul ul {
+                padding-left: 15px;
+            }
+
+            .AdCatalogList ul > li > a {
+                display: inline-block;
+                width: 100%;
+                color: #132E6D;
+                line-height: 25px;
+                padding-left: 10px;
+                padding-right: 15px;
+                text-decoration: none;
+            }
+
+                .AdCatalogList ul > li > a:hover {
+                    background-color: rgb(242,242,242);
+                }
+
+        .AdCatalogList .HaveSection:before {
+            content: '\2B9F';
+            display: inline-block;
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 25px;
+        }
+
+        .AdCatalogList input[type=text] {
+            color: #132E6D;
+            font-weight: bold;
+        }
+
+            .AdCatalogList input[type=text]::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+                font-weight: normal;
+            }
+
+            .AdCatalogList input[type=text]:-ms-input-placeholder { /* Internet Explorer 10-11 */
+                font-weight: normal;
+            }
+
+            .AdCatalogList input[type=text]::-ms-input-placeholder { /* Microsoft Edge */
+                font-weight: normal;
+            }
+
+        #AdProductList {
+            max-height: 600px;
+            overflow: auto;
+        }
+
+            #AdProductList .AdProductWrap {
+                height: 102px;
+                line-height: 100px;
+                margin-top: 15px;
+                padding: 5px;
+                border: 1px solid rgba(0,0,0,0.25);
+                border-radius: 0.25em;
+            }
+
+                #AdProductList .AdProductWrap:hover {
+                    cursor: pointer;
+                    background-color: rgb(242,242,242);
+                }
+
+        .AdProductWrap .AdImgWrap {
+            height: 90px;
+            width: 60px;
+            overflow: hidden;
+            float: left;
+        }
+
+            .AdProductWrap .AdImgWrap img {
+                height: 90px;
+                vertical-align: unset;
+            }
+
+        .AdProductWrap .AdProductTitle {
+            display: inline-block;
+            overflow: hidden;
+            padding: 0 10px 0 10px;
+            width: 400px;
+            min-height: 30px;
+            max-height: 90px;
+            line-height: 30px;
+        }
+
+        .AdProductWrap input[type="checkbox"] {
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: white;
+            border: 1px solid #28a745;
+            border-radius: .25em;
+            width: 30px;
+            height: 30px;
+            transition: all .3s linear;
+        }
+
+            .AdProductWrap input[type="checkbox"]:checked {
+                background-color: #132E6D;
+            }
+
+            .AdProductWrap input[type="checkbox"]:focus {
+                outline: 0 none;
+                box-shadow: none;
+            }
+
+        .AdProductWrap .AdProductChack {
+            display: inline-block;
+            float: right;
+            height: 30px;
+            width: 30px;
+        }
+        /*-------PRODUCT[Add-Change]-------*/
+        #AdProductAddWrapper {
+            position: absolute;
+            height: 750px;
+            width: 800px;
+            margin-left: -400px;
+            left: 50%;
+            top: 88px;
+            border: 1px solid gray;
+            background-color: white;
+            z-index: 3000;
+            overflow: auto;
+        }
+
+        .AdProductInputImgWrap button {
+            float: left;
+        }
+
+        .AdProductImgList {
+            height: 102px;
+            width: 100%;
+            overflow-y: auto;
+            border: 1px solid rgb(200,200,200);
+        }
+
+            .AdProductImgList > div {
+                height: 90px;
+                width: 60px;
+                overflow: hidden;
+                margin: 5px;
+                border: 1px solid rgb(100,100,100);
+                vertical-align: unset;
+                position: relative;
+                float: left;
+            }
+
+                .AdProductImgList > div > img {
+                    height: 90px;
+                }
+
+                .AdProductImgList > div > a {
+                    display: block;
+                    position: absolute;
+                    font-weight: bold;
+                    left: 0;
+                    bottom: 0;
+                    color: gray;
+                    height: 25px;
+                    width: 60px;
+                    text-align: center;
+                    background-color: rgba(255,255,255,0.5);
+                }
+
+                    .AdProductImgList > div > a.selected {
+                        background-color: rgba(255,0,0,0.5);
+                    }
+
+
+                    .AdProductImgList > div > a:hover {
+                        text-decoration: none;
+                        background-color: whitesmoke;
+                    }
+
+                    .AdProductImgList > div > a.selected:hover {
+                        background-color: rgba(255,0,0,0.8);
+                    }
+
+        .AdProductImgListSmall {
+            height: 38px;
+            width: 660px;
+            overflow-y: auto;
+            float: right;
+        }
+
+            .AdProductImgListSmall > div {
+                height: 36px;
+                width: 24px;
+                border: 1px solid rgb(100,100,100);
+                overflow: hidden;
+                margin: 0 5px;
+                vertical-align: unset;
+                float: left;
+            }
+
+                .AdProductImgListSmall > div > img {
+                    height: 36px;
+                }
+
+        .ScrollStyle::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            background-color: rgb(222, 226, 230);
+        }
+
+        .ScrollStyle::-webkit-scrollbar {
+            width: 12px;
+            background-color: rgb(222, 226, 230);
+        }
+
+        .ScrollStyle::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: rgb(102, 108, 114);
+        }
+
+        .AdMultiSelect {
+            max-height: 215px;
+            width: 100px;
+            overflow: auto;
+            border: 1px solid rgb(206, 212, 218);
+            border-radius: 0.25em;
+            padding: 5px;
+        }
+
+            .AdMultiSelect label {
+                display: block;
+                height: 25px;
+                margin: 0;
+            }
+
+        #AdProductAddWrapper table input[type="text"] {
+            width: 40px;
+            text-align: center;
+        }
+
+        #AdProductAtTable {
+            border: 1px solid rgb(242,242,242);
+            border-radius: 0.25em;
+            overflow: auto;
+            max-height: 150px;
+            max-width: 385px;
+            padding: 5px;
+        }
+
+            #AdProductAtTable thead th {
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+
+        #AdAtributeValues > select > option:disabled {
+            background-color: rgb(242,242,242);
+        }
+
+        #AdProductsGroup {
+            max-height: 260px;
+            width: 240px;
+            border: 1px solid rgb(206, 212, 218);
+            border-radius: 0.25em;
+            padding: 5px;
+        }
+
+        #AdProductLinks {
+            border: 1px solid rgb(242,242,242);
+            padding: 5px;
+            max-height: 155px;
+            width: 100%;
+            overflow: auto;
+        }
+
+            #AdProductLinks button {
+                margin: 5px;
+            }
+    </style>
+}
+@{await Html.RenderPartialAsync("~/Views/Admin/_Product.cshtml"); }
+
+<div class="row h-100">
+    <div class="col-4 AdCatalogList border-right">
+        <form method="post" asp-action="Catalogs" asp-controller="Admin">
+            <h3 class="mb-4">Catalogs</h3>
+            <div class="row text-center m-0">
+                <div class="col-3 p-0"><button type="submit" onclick="$('#AdMetod').val('Add')" class="btn btn-outline-success">&#10133;</button></div>
+                <div class="col-3 p-0"><button type="submit" onclick="$('#AdMetod').val('Change')" class="btn btn-outline-secondary AdDisable" disabled>&#9998;</button></div>
+                <div class="col-3 p-0"><button type="submit" onclick="$('#AdMetod').val('View')" class="btn btn-outline-secondary AdDisable" disabled>&#128065;</button></div>
+                <div class="col-3 p-0"><button type="submit" onclick="$('#AdMetod').val('Delete')" class="btn btn-outline-danger AdDisable" disabled>&#10134;</button></div>
+            </div>
+            <input class="form-control mt-3" type="text" placeholder="Catalog Name" name="NewName" id="AdNewName" />
+            <input class="form-control mt-3" type="text" placeholder="Culture Name" name="CultureName" id="AdCultureName" />
+            <input type="hidden" name="CurrentID" id="AdCurrentID" />
+            <input type="hidden" name="Metod" id="AdMetod" />
+        </form>
+        <div class="mt-3">
+            @functions {
+                string renderCatalog(IEnumerable<Catalog> catalogs, string IsChaild = "")
+                {
+                    string Temp = $"<ul {IsChaild}>";
+                    foreach (var el in catalogs.OrderBy(_ => _._Index).OrderBy(_=>_.Position))
+                    {
+                        string IsActive = el.IsActive ? "" : "class='text-danger'";
+                        string CName = CultureData.GetDefoultName(el.CultureName, (string)ViewBag.Culture);
+                        if (el.ChaildCatalogs?.Count > 0)
+                        {
+
+                            Temp += $"<li class='HaveSection'><a href='javascript:void(0)' {IsActive} data-id='{el.Id}' data-cultur='{CName}'>{el.Name}</a>";
+                            Temp += renderCatalog(el.ChaildCatalogs, "class='d-none'") + "</li>";
+                        }
+                        else Temp += $"<li><a href='javascript:void(0)' {IsActive} data-id='{el.Id}' data-cultur='{CName}'>{el.Name}</a></li>";
+                    }
+                    Temp += "</ul>";
+                    return Temp;
+                }
+            }
+            @Html.Raw(renderCatalog((IEnumerable<Catalog>)ViewBag.Enumerable))
+        </div>
+    </div>
+    <div class="col-8 ">
+        <h3 class="mb-4">Products</h3>
+        <div class="row text-center m-0">
+            <div class="col-4 p-0"><button type="submit" onclick="$('#AdProductAddWrapper,#DisableBody').removeClass('d-none');" class="btn btn-outline-success" id="AdProductAddButton" disabled>&#10133;</button></div>
+            <div class="col-4 p-0"><button id="AdProductListView" type="submit" onclick="" class="btn btn-outline-secondary " disabled>&#128065;</button></div>
+            <div class="col-4 p-0"><button id="AdProductListDelete" type="submit" onclick="" class="btn btn-outline-danger " disabled>&#10134;</button></div>
+        </div>
+        <div id="AdProductList" class="ScrollStyle">
+        </div>
+        <div class="text-center">
+            <button id="AdProductLoadMoreBtn" class="btn col-auto btn-primary mt-2 d-none">Load More</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $(".AdCatalogList ul > li > a").click(function () {
+                if ($(this).hasClass('font-weight-bold')) {
+                    $(this).removeClass('font-weight-bold');
+                    $('#AdCurrentID').val('');
+                    $('#AdNewName').val('');
+                    $('#AdCultureName').val('');
+                    $('.AdCatalogList button.AdDisable').prop('disabled', true);
+                }
+                else {
+                    $('.AdCatalogList ul > li > a.font-weight-bold').removeClass('font-weight-bold');
+                    $(this).addClass('font-weight-bold');
+                    $('#AdCurrentID').val($(this).data('id'));
+                    $('#AdNewName').val($(this).text());
+                    $('#AdCultureName').val($(this).data('cultur'));
+                    $('.AdCatalogList button.AdDisable').prop('disabled', false);
+                }
+            });
+
+            $(".AdCatalogList ul > li.HaveSection > a").click(function () {
+                $(this).siblings('ul').toggleClass('d-none');
+            });
+
+            $("#AdProductInputImg").change(function () {
+                if (this.files) {
+                    $('.AdProductImgListSmall').empty();
+                    $.each(this.files, function (i, val) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('.AdProductImgListSmall').append("<div><img src=" + e.target.result + " /></div>");
+                        }
+                        reader.readAsDataURL(val); // convert to base64 string
+                    });
+
+                }
+            });
+
+            $(".AdCatalogList ul > li > a").click(function () {
+                $("#AdProductLoadMoreBtn").data("i", 0);
+                if (!$('#AdProductAddWrapper').data('CatalogId')) {
+                    $('#AdProductAddWrapper').data('CatalogId', $(this).data('id'));
+                    $('#AdProductAddButton').prop('disabled', false);
+                    $("#AdProductLoadMoreBtn").removeClass("d-none");
+                }
+                else if ($('#AdProductAddWrapper').data('CatalogId') == $(this).data('id')) {
+                    $('#AdProductAddWrapper').data('CatalogId', "");
+                    $('#AdProductAddButton').prop('disabled', true);
+                    $('#AdProductListView').prop('disabled', true);
+                    $('#AdProductListDelete').prop('disabled', true);
+                    $('#AdProductList').empty();
+                    $("#AdProductLoadMoreBtn").addClass("d-none");
+                    return;
+                }
+                else $('#AdProductAddWrapper').data('CatalogId', $(this).data('id'));
+
+                $.ajax({
+                    url: "/Admin/Products/?CatalogID=" + $(this).data('id') +"&Index=0",
+                    type: "POST",
+                    contentType: "application/Json",
+                    dataType: "Json",
+                    beforeSend: function () {
+                        $('#AdProductList').empty().append('<div  class="text-center mt-3"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+                    },
+                    success: function (data) {
+                        $('#AdProductList').empty();
+                        SetProductList(data);
+                    }
+                });
+            });
+
+
+            $("#AdProductLoadMoreBtn").click(function () {
+                if ($('#AdProductAddWrapper').data('CatalogId')) {
+                    $("#AdProductLoadMoreBtn").data("i", $("#AdProductLoadMoreBtn").data("i") + 1);
+                     $.ajax({
+                        url: "/Admin/Products/?CatalogID=" + $('#AdProductAddWrapper').data('CatalogId') +"&Index="+$("#AdProductLoadMoreBtn").data("i"),
+                        type: "POST",
+                        contentType: "application/Json",
+                        dataType: "Json",
+                        beforeSend: function () {
+                            $('#AdProductList').append('<div id="AdProductListSpiner" class="text-center mt-3"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+                        },
+                         success: function (data) {
+                             $("#AdProductListSpiner").remove();
+                            if (data.error) $("#AdProductLoadMoreBtn").data("i", $("#AdProductLoadMoreBtn").data("i") == 0 ? 0 : $("#AdProductLoadMoreBtn").data("i") - 1);
+                            SetProductList(data);
+                        }
+                     });
+                }
+            });
+
+
+
+            $(".AdAtributeCheck").click(function () {
+                if ($(this).is(':checked')) {
+                    $("#AdPGAtribute").append("<option value='" + $(this).data('id') + "'>" + $(this).val() + "</option>");
+
+                    if (!$("#AdAtributeFirst").data('Id')) {//First Check
+                        $("#AdPGAtribute").prop('disabled', false);
+                        $("#AdPGAtribute").trigger('change');
+
+                        $("#AdAtributeFirst").data('Id', $(this).data('id'));
+                        $('#AdAtributeFirst').val("[" + $(this).val() + "]");
+                        $(this).data('IsFirst', true);
+                        $.each($('#AdAtributeValues_' + $(this).data('id') + ' > option'), function (i, v) {
+                            i && $('#AdProductAtTable thead > tr').append('<th> ' + $(v).text() + ' </th>');
+                        });
+                    }
+                    else {//Last Check
+                        $('#AdAtributeValues_' + $(this).data('id')).toggleClass('d-none');
+                        var refTH = $('<th class="text-secondary"> [' + $(this).val() + '] </th>');
+                        $('#AdProductAtTable thead > tr').prepend(refTH);
+                        $(this).data('refTH', refTH);
+                        $('#AdProductAtTable tbody').empty();
+                        $("#AdAtributeValues > select > option:disabled").not('option[value="0"]').prop('disabled', false);
+                    }
+                }
+                else {
+                    $("#AdPGAtribute option[value='" + $(this).data('id') + "']").remove();
+                    $("#AdPGAtribute").trigger('change');
+
+
+                    if ($(this).data('IsFirst')) {//First Check Is UnCheck
+                        $(this).data('IsFirst', false);
+                        $("#AdAtributeFirst").data('Id', "");
+                        $("#AdAtributeFirst").val("");
+                        $('#AdProductAtTable thead > tr').empty();
+                        $('#AdProductAtTable tbody').empty();
+                        if ($('.AdMultiSelect input:checked').length) {
+                            var nextFirst = $('.AdMultiSelect input:checked').first();
+                            $('#AdAtributeValues_' + nextFirst.data('id')).addClass("d-none");
+
+                            $("#AdAtributeFirst").data('Id', nextFirst.data('id'));
+                            $('#AdAtributeFirst').val("[" + nextFirst.val() + "]");
+                            nextFirst.data('IsFirst', true);
+                            $.each($('#AdAtributeValues_' + nextFirst.data('id') + ' > option'), function (i, v) {
+                                i && $('#AdProductAtTable thead > tr').append('<th> ' + $(v).text() + ' </th>');
+                            });
+                        }
+                    }
+                    else {
+                        $('#AdProductAtTable tbody').empty();
+                        $('#AdAtributeValues_' + $(this).data('id')).addClass('d-none');
+                        $(this).data('refTH').remove();
+                        $("#AdAtributeValues select option:disabled").not('option[value="0"]').prop('disabled', false);
+                    }
+                }
+            });
+
+            $("#AdAtributeValues button").click(function () {//Click Create Button
+                var tr = $("<tr></tr>");
+                if ($("#AdAtributeValues select").not(".d-none").find('option:selected:disabled').length) {
+                    alert('Enter Atribute Value.');
+                    return false;
+                }
+                if (!$("#AdAtributeFirst").data('Id')) return false;
+                var Rows = $('#AdProductAtTable tbody tr');
+                var Options = $("#AdAtributeValues select").not(".d-none").find('option:selected');
+                for (var i = 0; i < Rows.length; i++) {
+                    for (var j = 0; j < Options.length; j++) {
+                        if ($(Rows[i]).find("td").eq(j).text() === Options[j].innerText) {
+                            if (j == Options.length - 1) { alert("Atribute Is Added."); return; }
+                        }
+                        else break;
+                    }
+                }
+
+                $.each($("#AdAtributeValues select").not(".d-none"), function (i, v) {
+                    tr.append("<td>" + $(v).find('option:selected').text() + "</td>");
+                });
+
+                var AtrCounts = $('#AdAtributeValues_' + $('#AdAtributeFirst').data('Id') + ' option').length;
+                for (var i = 1; i < AtrCounts; i++) {
+                    var input = $("<input type='text' class='text-center'/>");
+                    //-----------------------------------------
+                    var Ids = [];
+                    $("#AdAtributeValues select").not(".d-none").find("option:selected").each(function (ind, va) { Ids.push($(va).val()); });
+                    Ids.push($('#AdAtributeValues_' + $('#AdAtributeFirst').data('Id') + ' option').eq(i).val());
+                    input.data("atribute_value_ids", Ids);
+                    //-----------------------------------------
+                    var td = $("<td></td>").append(input);
+                    tr.append(td);
+                }
+                $('#AdProductAtTable tbody').append(tr);
+            });
+
+            $("#AdPGAtribute").change(function () {
+
+                $("#AdProductLinks button").prop("disabled", true);
+                $("#AdProductLinks button[data-id_atribute='" + $(this).val() + "']").prop("disabled", false);
+                if (!this.options.length) {
+                    $(this).prop("disabled", true);
+                    $("#AdPGAtributeValue").prop("disabled", true);
+                    $("#AdPGAtributeValue").empty();
+                }
+                else {
+                    $("#AdPGAtributeValue").prop("disabled", false);
+                    $("#AdPGAtributeValue").empty();
+                    $("#AdPGAtributeValue").append($("#AdAtributeValues_" + $(this).val() + " option").not('option[value="0"]').clone());
+                }
+            });
+
+            $("#AdAddProductLinkButton").click(function () {
+                if ($("#AdProductLinks button[data-id='" + $("#AdPGAtributeValue").val() + "']").length) {
+                    alert("This Atribute is Added.");
+                    return;
+                }
+                var id = 'data-id="' + $("#AdPGAtributeValue").val() + '"';
+                var id_atribute = 'data-id_atribute="' + $("#AdPGAtribute").val() + '"';
+                var button = $('<button type="button" class="btn btn-outline-primary" ' + id + ' ' + id_atribute + '>' + $("#AdPGAtributeValue :selected").text() + '</button>');
+                $("#AdPGCurrentAtributeValue").append("<option value='" + $("#AdPGAtributeValue").val() + "'>" + $('#AdPGAtributeValue :selected').text() + "</option>");
+                //$("#AdPGCurrentAtributeValue").val($("#AdPGAtributeValue").val());
+                $("#AdProductLinks").append(button);
+            });
+
+            $(".AdProductImgList").click(function (e) {
+                if (e.target.tagName == "A") $(e.target).toggleClass("selected");
+            });
+
+            $("#AdAddNewProductButton").click(function () {
+                const formData = new FormData();
+
+                var NewProduct = {};
+
+                NewProduct.CatalogId = $('#AdProductAddWrapper').data('CatalogId');
+                NewProduct.ProductId = $('#AdProductAddWrapper').data('ProductId');
+                NewProduct.ProductTypeId = $('#AdProductAddWrapper').data('ProductTypeId');
+                NewProduct.Title = $("#AdProductTitleInput").val();
+                NewProduct.Brand = $("#AdProductBrandInput").val();
+                NewProduct.Description = $("#AdProductDescriptionInput").val();
+                NewProduct.SerchKeys = $("#AdSerchKeysInput").val();
+                NewProduct.Price = $("#AdPriceInput").val();
+                NewProduct.Sale = $("#AdSaleInput").val();
+                NewProduct.IsActive = $("#AdIsActiveInput").prop("checked");
+                NewProduct.IsMine = $("#AdIsMainInput").prop("checked");
+                NewProduct.CurrentAtributeValue = $("#AdPGCurrentAtributeValue").val();
+                NewProduct.GroupAtribute = $("#AdPGAtribute").val();
+                NewProduct.AtributeLinks = $.map($("#AdProductLinks button"), function (val) { return $(val).data("id"); });
+                NewProduct.FirstAtributeId = $("#AdAtributeFirst").data("Id");
+
+                NewProduct.RemoveIMGsId = [];
+                $(".AdProductImgList a.selected").each(function () {
+                    $(this).data("id") && NewProduct.RemoveIMGsId.push($(this).data("id"));
+                });
+
+                NewProduct.ProductAtributes = [];
+                $("#AdProductAtTable tbody td > input").each(function () {
+                    $(this).val() && NewProduct.ProductAtributes.push({ AtributeValuesID: $(this).data("atribute_value_ids"), Quantity: $(this).val() });
+                });
+
+                formData.append("ProductData", JSON.stringify(NewProduct));
+                //------IMG------//
+                var IMGs = $("#AdProductInputImg").prop('files');
+                $.each(IMGs, function (i, v) {
+                    formData.append("NewIMGs", v);
+                });
+
+                $.ajax({
+                    url: "/Admin/AddProuct/",
+                    type: "POST",
+                    dataType: "Json",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    beforeSend: function () {
+                        $("#AdAddNewProductButton").parent().append('<div  class="mt-1 ml-1 waitingSpinner float-right"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+                    },
+                    success: function (resp) {
+                        $("#AdAddNewProductButton~.waitingSpinner").remove();
+                        if (resp && resp.error) alert(resp.error);
+                        else if (resp.resp) {
+                            EmptyProductForm();
+                            UpdateProduct(resp.resp);
+                        }
+                    }
+                });
+            });
+
+            $("#AdDeleteProductButton").click(function () {
+
+                if ($('#AdProductAddWrapper').data('ProductId') && $('#AdProductAddWrapper').data('ProductTypeId')) {
+                    var req = "?ProductId=" + $('#AdProductAddWrapper').data('ProductId') + "&ProductTypeId=" + $('#AdProductAddWrapper').data('ProductTypeId');
+
+                    $.ajax({
+                        url: "/Admin/DeleteProduct/" + req,
+                        type: "POST",
+                        dataType: "Json",
+                        contentType: "application/Json",
+                        beforeSend: function () {
+                            $("#AdDeleteProductButton").parent().append('<div  class="mt-1 ml-1 waitingSpinner float-left"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+                        },
+                        success: function (resp) {
+                            $("#AdDeleteProductButton~.waitingSpinner").remove();
+                            if (resp && resp.error) alert(resp.error);
+                            else if (resp && resp.data) {
+                                EmptyProductForm();
+                                UpdateProduct(resp.data);
+                            }
+                            else EmptyProductForm();
+                        }
+                    });
+                }
+            });
+
+            $("#AdProductLinks").click(function (e) {
+                if (e.target.tagName == "BUTTON") {
+                    var req = "?ProductId=" + $('#AdProductAddWrapper').data('ProductId') + "&AtributeTypeId=" + $(e.target).data('id');
+                    console.log(req);
+                    $.ajax({
+                        url: "/Admin/ChangeProductType/" + req,
+                        type: "POST",
+                        dataType: "Json",
+                        contentType: "application/Json",
+                        beforeSend: function () {
+                        },
+                        success: function (resp) {
+                            if (resp && resp.error) alert(resp.error);
+                            else if (resp.data) {
+                                EmptyProductForm();
+                                UpdateProduct(resp.data);
+                            }
+                        }
+                    });
+                }
+            });
+
+            $("#AdProductList").click(function (e) {
+                console.log(e.target);
+                if (e.target.tagName == "DIV") {
+                    var ProductId = $(e.target).hasClass("AdProductWrap") ? $(e.target).data("Id") : $(e.target).closest(".AdProductWrap").data("Id");
+                    $.ajax({
+                        url: "/Admin/GetMineProductType/?ProductId=" + ProductId,
+                        type: "POST",
+                        dataType: "Json",
+                        contentType: "application/Json",
+                        beforeSend: function () {
+                            $('#AdProductAddWrapper,#DisableBody').removeClass('d-none');
+                        },
+                        success: function (resp) {
+                            if (resp && resp.error) alert(resp.error);
+                            else if (resp.data) {
+                                EmptyProductForm();
+                                UpdateProduct(resp.data);
+                            };
+                        }
+                    });
+                }
+                else if (e.target.tagName == "INPUT") {
+                    var check = $("#AdProductList input:checked");
+                    if (check.length > 0) {
+                        $("#AdProductListDelete").prop("disabled", false);
+                        $("#AdProductListView").prop("disabled", false);
+                    }
+                    else {
+                        $("#AdProductListDelete").prop("disabled", true);
+                        $("#AdProductListView").prop("disabled", true);
+                    }
+                }
+            });
+
+            $("#AdProductListView").click(function () {
+                var ProductIds = $("#AdProductList input:checked").map(function () { return $(this).closest(".AdProductWrap").data("Id") }).toArray();
+                if (ProductIds.length > 0) {
+                    $.ajax({
+                        url: "/Admin/ChangeProductView/",
+                        type: "POST",
+                        dataType: "Json",
+                        contentType: "application/Json",
+                        data: JSON.stringify( ProductIds ),
+                        beforeSend: function () {
+                        },
+                        success: function (resp) {
+                            if (resp && resp.error) alert(resp.error);
+                            else if (resp.data) {
+                                $(".AdCatalogList ul li a[data-id='" + $('#AdProductAddWrapper').data("CatalogId") + "']").click().click();
+                            }
+                        }
+                    });
+                }
+
+            });
+
+            $("#AdProductListDelete").click(function () {
+                var ProductIds = $("#AdProductList input:checked").map(function () { return $(this).closest(".AdProductWrap").data("Id") }).toArray();
+                if (ProductIds.length > 0) {
+                    $.ajax({
+                        url: "/Admin/DeleteProducts/",
+                        type: "POST",
+                        dataType: "Json",
+                        contentType: "application/Json",
+                        data: JSON.stringify( ProductIds ),
+                        beforeSend: function () {
+                        },
+                        success: function (resp) {
+                            if (resp && resp.error) alert(resp.error);
+                            else if (resp.data) {
+                                $(".AdCatalogList ul li a[data-id='" + $('#AdProductAddWrapper').data("CatalogId") + "']").click().click();
+                            }
+                        }
+                    });
+                }
+
+            });
+        });
+
+        function SetProductList(data) {
+            if (data) {
+                if (data.error) alert(data.error);
+                else if (data.res && data.res.length) {
+                    $.each(data.res, function (i, e) {
+                        var src = e.imgId ? 'src="/home/GetProductImg/' + e.imgId : 'src="//:0';
+                        var row = $('<div class="AdProductWrap' + (e.isActive ? '' : ' text-danger') + '"><div class="AdImgWrap"><img ' + src + '"/></div><div class="AdProductTitle">' + e.title + '</div><div class="AdProductChack"><input type="checkbox" /></div></div>');
+                        row.data('Id', e.id);
+
+                        $('#AdProductList').append(row);
+                    });
+                }
+            }
+        }
+        function EmptyProductForm() {
+            $("#AdProductAddWrapper").closest("form").resetForm();
+            $('#AdProductAddWrapper').data("ProductId", "");
+            $('#AdProductAddWrapper').data("ProductTypeId", "");
+            $(".AdProductImgListSmall").empty();
+            $(".AdProductImgList").empty();
+            $("#AdPGAtribute").empty().prop("diabled", true);
+            $("#AdPGAtributeValue").empty().prop("diabled", true);
+            $("#AdPGCurrentAtributeValue").empty().prop("diabled", true);
+            $("#AdProductLinks").empty();
+            $("#AdAtributeValues select").addClass("d-none");
+            $("#AdAtributeFirst").data("Id", "");
+            $("#AdProductAtTable thead > tr").empty();
+            $("#AdProductAtTable tbody").empty();
+        }
+        function UpdateProduct(data) {
+                    if (data) {
+                        data.imgIds && $.each(data.imgIds, function (i, v) {
+                            $(".AdProductImgList").append("<div><img src='/home/GetProductImg/" + v + "' /><a data-id='" + v + "' href='jasvascript:void(0);'>X</div>");
+                        });
+                        $('#AdProductAddWrapper').data('ProductId', data.productId);
+                        $('#AdProductAddWrapper').data('ProductTypeId', data.productTypeId);
+                        $("#AdProductTitleInput").val(data.title);
+                        $("#AdProductBrandInput").val(data.brand);
+                        $("#AdProductDescriptionInput").val(data.description);
+                        $("#AdSerchKeysInput").val(data.serchKeys);
+                        $("#AdPriceInput").val(data.price);
+                        $("#AdSaleInput").val(data.sale);
+                        $("#AdIsActiveInput").prop("checked", data.isActive);
+                        $("#AdIsMainInput").prop("checked", data.isMain);
+
+                        data.firstAtrId && !$(".AdMultiSelect input[data-id='" + data.firstAtrId.id + "']").prop("checked") && $(".AdMultiSelect input[data-id='" + data.firstAtrId.id + "']").click();
+
+                        data.lastAtrIds && $.each(data.lastAtrIds, function () {
+                            !$(".AdMultiSelect input[data-id='" + this.id + "']").prop("checked") && $(".AdMultiSelect input[data-id='" + this.id + "']").click();
+                        });
+
+                        data.groupAtributeId && !$(".AdMultiSelect input[data-id='" + data.groupAtributeId + "']").prop("checked") && $(".AdMultiSelect input[data-id='" + data.groupAtributeId + "']").click();
+
+                        data.groupAtrValIds && $.each(data.groupAtrValIds, function () {
+                            if (this && this.atrValId && this.atrId && this.name) {
+                                var button = $('<button type="button" class="btn btn-outline-primary" data-id="' + this.atrValId + '" data-id_atribute="' + this.atrId + '">' + this.name + '</button>');
+                                $("#AdPGCurrentAtributeValue").append("<option value='" + this.atrValId + "'>" + this.name + "</option>");
+                                $("#AdProductLinks").append(button);
+                            }
+                        });
+                        data.currentAtrValId && $("#AdPGCurrentAtributeValue").val(data.currentAtrValId);
+                        data.groupAtributeId && $("#AdPGAtribute").val(data.groupAtributeId);
+                        $("#AdPGAtribute").trigger('change');
+
+
+
+                        //data.firstAtrId && $("#AdAtributeFirst").val(data.firstAtrId.name).data("Id", data.firstAtrId.id);
+
+                        data.selectedOptions && $.each(data.selectedOptions, function () {
+                            $.each(this, function (i, v) {
+                                $("#AdAtributeValues_" + v.atrId).val(v.atrValId);
+                            });
+                            $("#AdAtributeValues button").click();
+                        });
+
+                        data.inputsVal && $.each(data.inputsVal, function (i, v) {
+                            $.each($("#AdProductAtTable tbody td input"), function (ii, vv) {
+                                if ($($(vv).data("atribute_value_ids")).not(v.atrValIds).length == 0) {
+                                    $(vv).val(v.qty);
+                                    return false;
+                                }
+                            });
+                        });
+
+                        data.currentAtrValId && $("#AdProductLinks button[data-id='" + data.currentAtrValId + "']").addClass("bg-primary text-white");
+                    }
+                }
+    </script>
+}

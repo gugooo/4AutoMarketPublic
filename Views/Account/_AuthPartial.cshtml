@@ -1,0 +1,25 @@
+﻿@{
+    Layout = null;
+}
+
+
+@{
+    if (!User.Identity.IsAuthenticated)
+    {
+
+        <div class="row mx-0 mt-4 text-center justify-content-center">
+            <div class="col-5 pr-0 mb-4"><div class="HeaderTab HeaderTabSelected" id="HTabSignIn" onclick="$('#HTabCreate').removeClass('HeaderTabSelected'); $('#BodyTabSignIn').removeClass('d-none'); $('#fogotForm').addClass('d-none');$('#loginForm').removeClass('d-none'); $(this).addClass('HeaderTabSelected'); $('#BodTabCreate').addClass('d-none');">@Localizer["Sign-in"]</div></div>
+            <div class="col-5 pl-0 mb-4"><div class="HeaderTab" id="HTabCreate" onclick="$('#HTabSignIn').removeClass('HeaderTabSelected');$('#BodTabCreate').removeClass('d-none'); $(this).addClass('HeaderTabSelected');$('#BodyTabSignIn').addClass('d-none');">@Localizer["Create account"]</div></div>
+            <div class="col-12" id="BodyTabSignIn">
+                @{await Html.RenderPartialAsync("~/Views/Account/Login.cshtml");}
+            </div>
+            <div class="col-12 d-none" id="BodTabCreate">
+                @{await Html.RenderPartialAsync("~/Views/Account/Registration.cshtml");}
+            </div>
+        </div>
+    }
+    else
+    {
+
+    }
+}

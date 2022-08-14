@@ -1,0 +1,164 @@
+﻿@model _4AutoMarket.ViewModels.MyAccount.PersonalInformationViewModel
+
+@{
+    ViewData["Title"] = "MyAccount";
+    Layout = "~/Views/Shared/_MyAccountLayout.cshtml";
+}
+@section Style{
+    <style>
+        .AMyAccount label {
+            font-size: 1.25em;
+            font-weight: bold;
+            margin: 0;
+            color: rgb(19,46,109);
+        }
+
+        .AMyAccount h3 {
+            font-weight: bold;
+            color: rgb(19,46,109);
+        }
+
+        .ARead input {
+            border: none;
+            background-color: transparent;
+            pointer-events: none;
+            color: rgb(54,88,167);
+        }
+
+        .ARead .AChange {
+            display: none;
+        }
+
+        .AEdit {
+            display: none;
+        }
+
+            .AEdit a {
+                text-decoration: underline;
+                color: rgb(19,46,109);
+                font-size: 1.25em;
+            }
+
+                .AEdit a:hover {
+                    color: rgb(54,88,167);
+                }
+
+        .ARead .AEdit {
+            display: block;
+        }
+
+        ._shadow {
+            box-shadow: rgba(0,0,0,0.3) 0 0 10px 0;
+        }
+    </style>
+}
+
+
+<form asp-action="MyAccount" method="post" asp-antiforgery="true">
+    <div class="row mt-4 AMyAccount @(ViewBag.ARead == null ? "ARead" : "")">
+        <div asp-validation-summary="ModelOnly" class="text-danger col-12"></div>
+        <div class="col-12 col-md-6">
+            <h3 class="mb-4">@Localizer["Personal Information"]</h3>
+            <div class="p-3 bg-light border rounded _shadow">
+                <div class="form-group row">
+                    <label asp-for="FName" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="FName" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FName" class="text-danger col-12"></span>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="LName" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="LName" class="form-control" />
+                    </div>
+                    <span asp-validation-for="LName" class="text-danger col-12"></span>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="Email" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="Email" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger col-12"></span>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="DateOfBirth" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="DateOfBirth" class="form-control" />
+                    </div>
+                    <span asp-validation-for="DateOfBirth" class="text-danger col-12"></span>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="Phone" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="Phone" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Phone" class="text-danger col-12"></span>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="Password" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="Password" class="form-control" placeholder="*******" />
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger col-12"></span>
+                </div>
+                <div class="form-group row AChange">
+                    <label asp-for="ComparePassword" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="ComparePassword" class="form-control" placeholder="*******" />
+                    </div>
+                    <span asp-validation-for="ComparePassword" class="text-danger col-12"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <h3 class="mb-4">@Localizer["My Address"]</h3>
+            <div class="p-3 bg-light h-auto border rounded _shadow">
+                <div class="form-group row">
+                    <label asp-for="Adress" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="Adress" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Adress" class="text-danger col-12"></span>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="Country" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="Country" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Country" class="text-danger col-12"></span>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="City" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="City" class="form-control" />
+                    </div>
+                    <span asp-validation-for="City" class="text-danger col-12"></span>
+                </div>
+                <div class="form-group row">
+                    <label asp-for="Postcode" class="control-label col-6"></label>
+                    <div class="col-6">
+                        <input asp-for="Postcode" class="form-control" />
+                    </div>
+                    <span asp-validation-for="Postcode" class="text-danger col-12"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-3 AEdit">
+            <a href="javascript:void(0);" onclick="$('.AMyAccount').removeClass('ARead');">@Localizer["Edit Personal Details"]</a>
+        </div>
+        <div class="col-12 AChange">
+            <div class="form-group row mt-4 justify-content-end">
+                <div class="col-auto py-2">
+                    <span asp-validation-for="CurrentPassword" class="text-danger col-auto mr-auto ml-auto pb-1"></span>
+                </div>
+                <div class="col-auto">
+                    <input asp-for="CurrentPassword" class="form-control" placeholder="@Html.DisplayNameFor(_=>_.CurrentPassword)" />
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-light px-4 border" type="submit"><b>@Localizer["Save"]</b></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

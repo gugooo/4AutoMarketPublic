@@ -1,0 +1,163 @@
+﻿
+@{
+    ViewData["Title"] = "RequestCallAndEmail";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@{
+    IEnumerable<RequestCell> reqC = (IEnumerable<RequestCell>)ViewBag.cells;
+    IEnumerable<RequestEmail> reqE = (IEnumerable<RequestEmail>)ViewBag.emails;
+    int indexCell = (int)ViewBag.ic;
+    bool isNewCell = (bool)ViewBag.isnc;
+    int indexEmail = (int)ViewBag.ie;
+    bool isNewEmail = (bool)ViewBag.isne;
+}
+@section Style{
+    <style>
+        #cellListWrap, #emailListWrap {
+            height: 600px;
+            width: 100%;
+            border: 1px solid rgba(0,0,0,0.15);
+            overflow: auto;
+            font-size: small;
+        }
+
+            #cellListWrap tr {
+                border-bottom: 1px solid rgba(0,0,0,0.15);
+            }
+
+            #emailListWrap tr {
+                border-bottom: 1px solid rgba(0,0,0,0.15);
+            }
+
+        #cellListWrap, thead {
+            text-align: center;
+        }
+
+        #emailListWrap thead {
+            text-align: center;
+        }
+    </style>
+}
+<div class="row">
+    <div class="col-12 mb-5">
+        <h3>Request Call And Email</h3>
+    </div>
+    <div class="col-5">
+        <form asp-action="RequestCallAndEmail" asp-controller="Admin" method="get">
+            <div class="form-row pr-2">
+                <div class="form-group ml-2">
+                    <select asp-for="@indexCell" class="form-control">
+                        <option value="1">Past month</option>
+                        <option value="3">Past 3 month</option>
+                        <option value="6">Past 6 month</option>
+                        <option value="12">Past year</option>
+                        <option value="0">All time</option>
+                    </select>
+                </div>
+                <div class="form-group text-center mx-3">
+                    <label class="form-check-label" asp-for="@isNewCell">Only New</label><br />
+                    <input class="form-check-inline" asp-for="@isNewCell" />
+                </div>
+                <div class="form-group ml-auto">
+                    <input class="btn btn-outline-secondary" type="submit" value="Search" />
+                </div>
+            </div>
+        </form>
+        <div id="cellListWrap">
+            <table class="w-100" cellpadding="8">
+                <thead>
+                    <tr>
+                        <th>Phone</th>
+                        <th>Date</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (reqC != null && reqC.Count() > 0)
+                    {
+                        foreach (var c in reqC)
+                        {
+                            <tr>
+                                <td>@c.Number</td>
+                                <td>@c.Created.ToShortDateString()</td>
+                                <td>
+                                    @if (c.isNew)
+                                    {<button class="btn btn-outline-primary" data-id="@c.Id" type="button">&#128065;</button>}
+                            </td>
+                        </tr>
+                    }
+                }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-7">
+        <form asp-action="RequestCallAndEmail" asp-controller="Admin" method="get">
+            <div class="form-row pr-2">
+                <div class="form-group ml-2">
+                    <select asp-for="@indexEmail" class="form-control">
+                        <option value="1">Past month</option>
+                        <option value="3">Past 3 month</option>
+                        <option value="6">Past 6 month</option>
+                        <option value="12">Past year</option>
+                        <option value="0">All time</option>
+                    </select>
+                </div>
+                <div class="form-group text-center mx-3">
+                    <label class="form-check-label" asp-for="@isNewEmail">Only New</label><br />
+                    <input class="form-check-inline" asp-for="@isNewEmail" />
+                </div>
+                <div class="form-group ml-auto">
+                    <input class="btn btn-outline-secondary" type="submit" value="Search" />
+                </div>
+            </div>
+        </form>
+        <div id="emailListWrap">
+            <table class="w-100" cellpadding="8">
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Title</th>
+                        <th>Message</th>
+                        <th>Date</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (reqE != null && reqE.Count() > 0)
+                    {
+                        foreach (var e in reqE)
+                        {
+                            <tr>
+                                <td>@e.Email</td>
+                                <td>@e.Title</td>
+                                <td>@e.Message</td>
+                                <td>@e.Created.ToShortDateString()</td>
+                                <td>
+                                    @if (e.isNew)
+                                    {<button class="btn btn-outline-primary" data-id="@e.Id" type="button">&#128065;</button>}
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+    $(document).ready(function () {
+        $('#cellListWrap tbody button').click(function () {
+            $.post("/Admin/viewRequestCellOrEmail?isCell=TRUE&id=" + $(this).data('id'));
+            $(this).remove();
+        });
+        $('#emailListWrap tbody button').click(function () {
+            $.post("/Admin/viewRequestCellOrEmail?isCell=FALSE&id=" + $(this).data('id'));
+            $(this).remove();
+        });
+    });
+    </script>
+}

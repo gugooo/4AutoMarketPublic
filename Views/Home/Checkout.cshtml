@@ -1,0 +1,131 @@
+﻿@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    CheckoutViewModel _M = (CheckoutViewModel)ViewBag.CheckoutViewModel;
+}
+@using System.Globalization;
+@section Style{
+    <style>
+        .TextDarkStyle {
+            color: rgb(19,46,109) !important;
+        }
+
+        .TextWhiteStyle {
+            color: rgb(54,88,167) !important;
+        }
+
+        .Checkout input {
+            background-color: rgb(242,242,242) !important;
+        }
+
+        @@media (max-width: 767.98px) {
+            .COrderInfo {
+                position: static !important;
+            }
+        }
+    </style>
+}
+
+
+<div class="container">
+    <div class="row Checkout">
+        <div class="col-12 text-center my-5 TextDarkStyle"><h3 style="color:#132e6d">@Localizer["Checkout"]</h3></div>
+        <div class="col-12">
+            <h3>
+                @ViewBag.err
+            </h3>
+            <h3>
+                @ViewBag.H
+            </h3>
+            <h3>
+                @ViewBag.H5
+            </h3>
+            <h3>
+                @ViewBag.HS
+            </h3>
+        </div>
+        <div class="col-12">
+            <div class="row TextWhiteStyle position-relative">
+                <form asp-action="Checkout" asp-controller="Home" method="post" asp-antiforgery="true">
+                    @{
+                        string promo = (string)ViewBag.promoCode;
+                        decimal value = (decimal)ViewBag.OrderValue;
+                        decimal shipping = (decimal)ViewBag.Shipping;
+                        decimal promoSale = (decimal)ViewBag.PromoSale;
+                    }
+                    <input type="hidden" id="PaymentMethod" asp-for="@_M.Payment" />
+                    <input class="d-none" asp-for="@_M.PromoCode" value="@promo" />
+                    <div class="text-danger col-12 col-md-4@(ViewBag.ModelError==null?" d-none":"")">@(ViewBag.ModelError != null ? ((string)ViewBag.ModelError) : "")</div>
+                    <div class="col-12 col-md-3 offset-md-6 position-absolute COrderInfo" style="right:20.8333%;">
+                        <h4 class="mb-4 text-center">@Localizer["Order"]</h4>
+                        <p class="m-0">@Localizer["Order Value"] <small class="float-right pl-1" style="line-height:24px;"> @(ViewBag.amd ?? "")</small><b class="float-right">@((value * (1 - promoSale / 100)).ToString("N", new CultureInfo("en")).Replace(".00", ""))</b></p>
+                        <p>@Localizer["Sipping"] <small class="float-right pl-1" style="line-height:24px;"> @(ViewBag.amd ?? "")</small><b class="float-right">@shipping.ToString("N", new CultureInfo("en")).Replace(".00", "")</b></p>
+                        <p><b>@Localizer["Total"]</b> <small class="float-right pl-1" style="line-height:24px;"> @(ViewBag.amd ?? "")</small><b class="float-right">@((value * (1 - promoSale / 100) + shipping).ToString("N", new CultureInfo("en")).Replace(".00", ""))</b></p>
+                    </div>
+                    <div class="form-group col-12 col-md-4">
+                        <label asp-for="@_M.Phone" class="control-label"></label>
+                        <input asp-for="@_M.Phone" class="form-control" />
+                        <span asp-validation-for="@_M.Phone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-12 col-md-4">
+                        <label asp-for="@_M.Email" class="control-label"></label>
+                        <input asp-for="@_M.Email" class="form-control" />
+                        <span asp-validation-for="@_M.Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-row m-0 p-2">
+                        <div class="form-group col-12 col-md-4 pr-3">
+                            <label asp-for="@_M.Address" class="control-label"></label>
+                            <input asp-for="@_M.Address" class="form-control" />
+                            <span asp-validation-for="@_M.Address" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col">
+                            <label asp-for="@_M.Building" class="control-label"></label>
+                            <input asp-for="@_M.Building" class="form-control" />
+                            <span asp-validation-for="@_M.Building" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col">
+                            <label asp-for="@_M.Apt" class="control-label"></label>
+                            <input asp-for="@_M.Apt" class="form-control" />
+                            <span asp-validation-for="@_M.Apt" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col">
+                            <label asp-for="@_M.Enter" class="control-label"></label>
+                            <input asp-for="@_M.Enter" class="form-control" />
+                            <span asp-validation-for="@_M.Enter" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col">
+                            <label asp-for="@_M.Floor" class="control-label"></label>
+                            <input asp-for="@_M.Floor" class="form-control" />
+                            <span asp-validation-for="@_M.Floor" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col">
+                            <label asp-for="@_M.Code" class="control-label"></label>
+                            <input asp-for="@_M.Code" class="form-control" />
+                            <span asp-validation-for="@_M.Code" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group col-12 col-md-4">
+                        <label asp-for="@_M.Description" class="control-label"></label>
+                        <input asp-for="@_M.Description" class="form-control" />
+                        <span asp-validation-for="@_M.Description" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mt-5">
+                        <label class="control-label col-12"><b>@Localizer["Payment"]</b></label>
+                        <button type="submit" class="btn btn-light text-center py-2 px-5 border ml-3" onclick="$('#PaymentMethod').val('Cash');">
+                            <img src="~/Icons/Cash.png" height="30" /><br />
+                            @Localizer["Cash"]
+                        </button>
+                        <button type="submit" class="btn btn-light text-center py-2 px-5 border d-none" onclick="$('#PaymentMethod').val('Card');">
+                            <img src="~/Icons/Credit-card.png" height="30" /><br />
+                            Card
+                        </button>
+                        <button type="submit" class="btn btn-light text-center py-2 px-5 border" onclick="$('#PaymentMethod').val('Idram');">
+                            <img src="~/Icons/E-Pay.png" height="30" /><br />
+                            Idram
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

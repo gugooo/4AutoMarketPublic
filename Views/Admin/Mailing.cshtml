@@ -1,0 +1,149 @@
+﻿
+@{
+    ViewData["Title"] = "Mailing";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@section Style{
+    <style>
+        .mailingHistoryWrap {
+            height: 600px;
+            overflow: auto;
+        }
+
+            .mailingHistoryWrap tr {
+                border-bottom: 1px solid rgba(0,0,0,0.15);
+            }
+
+            .mailingHistoryWrap tbody tr:hover {
+                background-color: lightgray;
+                cursor: pointer;
+            }
+
+        .trSelected {
+            background-color: rgb(240,240,240);
+        }
+    </style>
+}
+@{
+
+    MailingViewModel req = (MailingViewModel)ViewBag.m;
+    if (req == null) { req = new MailingViewModel(); }
+}
+
+<div class="row">
+    <div class="col-12 mb-4">
+        <h3>Mailing</h3>
+    </div>
+    <div class="col-4">
+        <h5>History</h5>
+        <div>
+            <select onchange="getMailingHistory(this)" class="form-control">
+                <option value="1" selected>Past month</option>
+                <option value="3">Past 3 month</option>
+                <option value="6">Past 6 month</option>
+                <option value="12">Past year</option>
+                <option value="0">All time</option>
+            </select>
+        </div>
+        <div class="mailingHistoryWrap mt-3">
+            <table class="text-center w-100" cellpadding="8" align="center">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Count</th>
+                        <th>date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        IEnumerable<MailingHistory> mh = ((IEnumerable<MailingHistory>)ViewBag.mh)?.Reverse();
+                    }
+                    @if (mh != null && mh.Count() > 0)
+                    {
+                        foreach (var el in mh)
+                        {
+                            <tr>
+                                <td class="mhTitle">@el.Title</td>
+                                <td>@el.MessageCount</td>
+                                <td>@el.Created.ToShortDateString()</td>
+                                <td class="d-none mhTo">@el.to</td>
+                                <td class="d-none mhMessage">@el.Message</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-8 border-left">
+        <form asp-action="Mailing" asp-controller="Admin" method="post">
+            <div class="row">
+                <div class="col-12">
+                    <h5>Send Emails</h5>
+                </div>
+                <div class="col-12">
+                    <div class="form-row text-center">
+                        <div class="form-group col">
+                            <label asp-for="@req.RegistredUsers" class="form-check-label">Registred Users: <a asp-action="getEmails" asp-controller="Admin" asp-route-ise="1" target="_blank">@(((int)ViewBag.uCount).ToString())</a></label><br />
+                            <input asp-for="@req.RegistredUsers" type="checkbox" class="form-check-inline" />
+                        </div>
+                        <div class="form-group col">
+                            <label asp-for="@req.SubscribedUsers" class="form-check-label">Subscribed: <a asp-action="getEmails" asp-controller="Admin" asp-route-ise="2" target="_blank">@(((int)ViewBag.sCount).ToString())</a></label><br />
+                            <input asp-for="@req.SubscribedUsers" type="checkbox" class="form-check-inline" />
+                        </div>
+                        <div class="form-group col">
+                            <label asp-for="@req.NewSubscribedUsers" class="form-check-label">New Subscribed: <a asp-action="getEmails" asp-controller="Admin" asp-route-ise="3" target="_blank">@(((int)ViewBag.nsCount).ToString())</a></label><br />
+                            <input asp-for="@req.NewSubscribedUsers" type="checkbox" class="form-check-inline" />
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label asp-for="@req.OtherUsers class=" form-check-label">Other Emails</label>
+                    <textarea id="otherEmails" asp-for="@req.OtherUsers" class="form-control" placeholder="Emails" style="min-height: 80px;"></textarea>
+                </div>
+                <div class="col-12 mt-3">
+                    <label asp-for="@req.Title" class="form-check-label">Emails Title</label>
+                    <input id="messageTitle" asp-for="@req.Title" class="form-control" type="text" placeholder="Title" />
+                </div>
+                <div class="col-12 mt-3">
+                    <label asp-for="@req.Message" class="form-check-label">Emails Message</label>
+                    <textarea id="messageText" asp-for="@req.Message" class="form-control" type="text" placeholder="Message" style="min-height:300px;"></textarea>
+                </div>
+                <div class="col-12 mt-3">
+                    <input class="btn btn-outline-secondary px-4" type="submit" value="Send" />
+                </div>
+                <div class="col-12 mt-1 text-danger">
+                    @(ViewBag.err ?? "")
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts{
+    <script>
+    $(document).ready(function () {
+        $('.mailingHistoryWrap tbody').click(function (e) {
+            if (e.target.tagName == "TD") {
+                $('.mailingHistoryWrap tbody tr.trSelected').removeClass('trSelected');
+                $(e.target).parent().addClass('trSelected');
+                $('#otherEmails').val($(e.target).parent().find('td.mhTo').text());
+                $('#messageTitle').val($(e.target).parent().find('td.mhTitle').text());
+                $('#messageText').val($(e.target).parent().find('td.mhMessage').text());
+            }
+        });
+    });
+    function getMailingHistory(el) {
+        $('.mailingHistoryWrap tbody').empty();
+        $('.mailingHistoryWrap').append('<div id="spinnerMH" class="text-center mt-3"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>')
+        $.post('/Admin/getMailingHistory?interval=' + $(el).val(), function (data) {
+            $('#spinnerMH').remove();
+            if (data && Array.isArray(data)) {
+                $.each(data, function (i,e) {
+                    $('.mailingHistoryWrap tbody').append("<tr><td class='mhTitle'>"+e.title+"</td><td>"+e.count+"</td><td>"+e.date+"</td><td class='d-none mhTo'>"+e.to+"</td><td class='d-none mhMessage'>"+e.mess+"</td></tr>");
+                });
+            }
+        });
+    }
+    </script>
+}

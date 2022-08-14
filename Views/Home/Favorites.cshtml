@@ -1,0 +1,234 @@
+﻿
+@{
+    ViewData["Title"] = "Favorites";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Style{
+    <style>
+        .fProduct {
+            background-color:rgb(245,245,245);
+        }
+
+            .fProduct > .fImgWrap {
+                overflow: hidden;
+            }
+
+                .fProduct > .fImgWrap img {
+                    width:100%;
+                }
+
+        .fInfo {
+            padding: 0 20px 0 20px;
+            position: relative;
+        }
+
+        .TextDarkStyle {
+            color: rgb(19,46,109) !important;
+        }
+
+        .TextWhiteStyle {
+            color: rgb(54,88,167) !important;
+        }
+
+        .fRemove {
+            text-align: right;
+            font-weight: bold;
+        }
+
+            .fRemove > a:hover {
+                color: rgb(54,88,167) !important;
+                text-decoration: none;
+            }
+
+        .atrMenu {
+            width: 100%;
+        }
+
+            .atrMenu select {
+                width: 125px;
+            }
+
+            .atrMenu > div {
+                float: left;
+            }
+
+
+        .fProduct select option:disabled {
+            background-color: lightgrey;
+        }
+    </style>
+}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-12 mt-5 col-md-8 text-center">
+            <h1 class="mb-5 TextDarkStyle">@Localizer["Favorites"]</h1>
+            @{
+                IEnumerable<ProductView> products = (IEnumerable<ProductView>)ViewBag.Products;
+                string Culture = (string)ViewBag.Culture;
+            }
+            @if (products != null && products.Count() > 0)
+            {
+                foreach (var pr in products)
+                {
+                    <div class="row fProduct text-left mt-3 pb-3 border-bottom" data-id="@pr.Id">
+                        <div class="fRemove col-12"><a class="TextDarkStyle" href="javascript:void(0);">X</a></div>
+                        <div class="fImgWrap col-12 col-md-5 text-center">
+                            <a class="h-100" asp-action="Product" asp-controller="Home" asp-route-id="@pr.Id">
+                                <img src="@(string.IsNullOrEmpty(pr.ImgId)?"//:0":"/home/GetProductImg/"+pr.ImgId)" />
+                            </a>
+                        </div>
+                        <div class="fInfo col-12 col-md-7">
+                            <h3><a asp-action="Product" asp-controller="Home" asp-route-id="@pr.Id" class="TextDarkStyle">@pr.Title</a></h3>
+                            @if (!string.IsNullOrEmpty(pr.Sale) && pr.Sale != "0")
+                            {
+                                <del class="TextWhiteStyle">@pr.Price</del>
+                                <b class="TextWhiteStyle"> @pr.Sale</b>
+                                <small> @(ViewBag.amd ?? "")</small>
+                            }
+                            else
+                            {
+                                <b class="TextWhiteStyle">@pr.Price</b>
+                                <small> @(ViewBag.amd ?? "")</small>
+                            }
+                            <div class="atrMenu my-3">
+                                <div>
+                                    @for (int i = 0; i < pr.Atributes.Count; i++)
+                                    {
+                                        var atr = pr.Atributes.ElementAt(i);
+                                        if (pr.LinkAtrVal != null && atr.Value.Any(_ => _.Id == pr.LinkAtrVal.Id))
+                                        {
+                                            <div class="TextDarkStyle" style="line-height: 38px; width: 125px;">
+                                                <b>@CultureData.GetDefoultName(atr.Key.CultureName, Culture, atr.Key.Name):</b>
+                                                <span class="TextWhiteStyle"> @CultureData.GetDefoultName(pr.LinkAtrVal.CultureName, Culture, pr.LinkAtrVal.Value)</span>
+                                            </div>
+                                            <select class="d-none">
+                                                <option selected value="@pr.LinkAtrVal.Id"></option>
+                                            </select>
+                                        }
+                                        else
+                                        {
+                                            bool isHide = !atr.Key.IsActive && atr.Key.Values.Count() == 1;
+                                            <select class="mt-1 form-control@(isHide?" d-none":"" )">
+                                                @if (!isHide)
+                                                {
+                                                    <option value="">@CultureData.GetDefoultName(atr.Key.CultureName, Culture, atr.Key.Name)</option>
+                                                }
+                                                @foreach (var atrVal in atr.Value)
+                                                {
+                                                    if (isHide)
+                                                    {
+                                                        <option selected value="@atrVal.Id"></option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@atrVal.Id">@CultureData.GetDefoultName(atrVal.CultureName, Culture, atrVal.Value)</option>
+                                                    }
+                                                }
+                                            </select>
+                                        }
+                                    }
+                                </div>
+                                <button class="btn btn-dark my-2 buttonAddToBag">Add to Bag</button>
+                            </div>
+                        </div>
+
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+    $(document).ready(function () {
+
+
+
+        $('.fRemove a').click(function (e) {
+            var ids = $.cookie("FavoritIds");
+            ids = ids && JSON.parse(ids);
+            if ($.isArray(ids)) {
+                ids = $.grep(ids, function (at) { return at.id != $(e.target).closest('.fProduct ').data('id'); });
+                $.cookie("FavoritIds", JSON.stringify(ids), { expires: 365, path: '/' });
+                ids.length ? (ids.length > 99 ? $('#favoritesWrap small').text('99+') : $('#favoritesWrap small').text(ids.length)) : $('#favoritesWrap small').addClass('d-none');
+            }
+            $(e.target).closest('.fProduct ').remove();
+        });
+
+        $(".buttonAddToBag").click(function () {
+            var selects = $(this).closest('.atrMenu').find('select');
+            var options = $(this).closest('.atrMenu').find('select option:selected').not('option[value=""]');
+            var optionsVal = options.map(function () { return this.value }).toArray();
+            var productId = $(this).closest('.fProduct').data('id');
+            if (selects.length == options.length) {
+                var products = $.cookie("ProductList");
+                products = products && JSON.parse(products);
+                if ($.isArray(products)) {
+                    var productIsAdd = products.find(_ => _.id == productId);
+                    if (productIsAdd && $(productIsAdd.atrs).not(optionsVal).length == 0 && $(optionsVal).not(productIsAdd.atrs).length == 0) {
+                        productIsAdd.count = productIsAdd.count + 1;
+                        products = $.grep(products, function (at) { return at.id != productId; });
+                        products.push(productIsAdd);
+                        $.cookie("ProductList", JSON.stringify(products),{ expires: 365, path: '/' });
+                        prCount = 0;
+                        $.each(products, function () { prCount = prCount + this.count; })
+                        $('#ShoppingBagWrap small').removeClass('d-none').text(prCount > 99 ? '99+' : prCount);
+                    }
+                    else {
+                        products.push({ id: productId, count: 1, atrs: optionsVal });
+                        $.cookie("ProductList", JSON.stringify(products),{ expires: 365, path: '/' });
+                         prCount = 0;
+                        $.each(products, function () { prCount = prCount + this.count; })
+                        $('#ShoppingBagWrap small').removeClass('d-none').text(prCount);
+                    }
+                }
+                else {
+                    products = [{ id: productId, count: 1, atrs: optionsVal }];
+                    $.cookie("ProductList", JSON.stringify(products),{ expires: 365, path: '/' });
+                    $('#ShoppingBagWrap small').removeClass('d-none').text(1);
+                }
+            }
+            else {
+                $(this).parent().find('select option:selected[value=""]').parent().addClass('border-danger');
+            }
+        });
+
+        $('.atrMenu select').change(function () {
+            $('.atrMenu select').hasClass('border-danger') && $('.atrMenu select').removeClass('border-danger');
+        });
+        getAtrVals();
+    });
+
+    function getAtrVals() {
+        if ($('.fProduct').length > 0) {
+            $.each($('.fProduct'), function (i, e) {
+                $.post("/home/getAtributes/" + $(e).data('id'), function (resp) { $(e).find('.atrMenu').change(resp, updateAtributes).trigger('change'); });
+            });
+        }
+    }
+    function updateAtributes(e) {
+        if (!e.data) return;
+        $(e.currentTarget).find('select option').attr('disabled', false);
+        $.each($(e.currentTarget).find('select'), function (i, sel) {
+                    if ($(sel).val()) {
+                        var temp = $.grep(e.data, function (c) { return ($.inArray($(sel).val(), c) != -1); });
+
+                        $.each($(e.currentTarget).find('select').not(sel).find('option:not([value=""])'), function (j, op) {
+                            var oId = $(op).val();
+                            $.each(temp, function (k, c) {
+                                    if ($.inArray(oId, c) == -1) {
+                                    $(op).attr('disabled', true);
+                                    }
+                                else {
+                                    $(op).attr('disabled', false);
+                                        return false;
+                                    }
+                                });
+                            });
+                        }
+                });
+            }
+
+    </script>
+}

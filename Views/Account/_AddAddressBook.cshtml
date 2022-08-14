@@ -1,0 +1,38 @@
+﻿@model AddressBookWrap
+
+<div class="row justify-content-center d-none" id="AddNewAddres">
+    <div class="col-12 col-md-4 border">
+        <form asp-action="AddNewAddress" method="post">
+            <div class="ANAclose"><a href="javascript:void(0);" onclick="$('#AddNewAddres,#DisableBody').addClass('d-none')">X</a></div>
+            <h4 class="pb-3">@Localizer["New Address"]</h4>
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input asp-for="AddNewAddress.FName" class="form-control" placeholder="@Html.DisplayNameFor(_=>_.AddNewAddress.FName)" />
+                <span asp-validation-for="AddNewAddress.FName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="AddNewAddress.LName" class="form-control" placeholder="@Html.DisplayNameFor(_=>_.AddNewAddress.LName)" />
+                <span asp-validation-for="AddNewAddress.LName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="AddNewAddress.Country" class="form-control" placeholder="@Html.DisplayNameFor(_=>_.AddNewAddress.Country)" />
+                <span asp-validation-for="AddNewAddress.Country" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="AddNewAddress.City" class="form-control" placeholder="@Html.DisplayNameFor(_=>_.AddNewAddress.City)" />
+                <span asp-validation-for="AddNewAddress.City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="AddNewAddress.Adress" class="form-control" placeholder="@Html.DisplayNameFor(_=>_.AddNewAddress.Adress)" />
+                <span asp-validation-for="AddNewAddress.Adress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="AddNewAddress.Postcode" class="form-control" placeholder="@Html.DisplayNameFor(_=>_.AddNewAddress.Postcode)" />
+                <span asp-validation-for="AddNewAddress.Postcode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="@Localizer["Add Address"]" class="btn btn-light col border" />
+            </div>
+        </form>
+    </div>
+</div>

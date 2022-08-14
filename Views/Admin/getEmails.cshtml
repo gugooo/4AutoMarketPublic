@@ -1,0 +1,23 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Emails</title>
+</head>
+<body>
+    @{ IEnumerable<string> ems = (IEnumerable<string>)ViewBag.ems;}
+    @if (ems != null && ems.Count() > 0)
+    {
+        foreach (var em in ems)
+        {
+            <div>@em</div>
+        }
+    }
+</body>
+</html>

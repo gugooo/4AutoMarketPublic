@@ -1,0 +1,222 @@
+﻿
+@{
+    ViewData["Title"] = "Messages";
+    Layout = "~/Views/Shared/_MyAccountLayout.cshtml";
+}
+@section Style{
+    <style>
+        .MessageBox {
+            height: 400px;
+            background-color: rgb(220,220,220);
+        }
+
+        .MBlue {
+            color: rgb(54,88,167);
+        }
+
+        .MDarkBlue {
+            color: rgb(19,46,109);
+        }
+
+        .MNav {
+            border-bottom: 1px solid rgb(19,46,109);
+            text-decoration: none;
+            display: block;
+            color: rgb(54,88,167);
+            font-size: 1.5em;
+            line-height: 50px;
+            height: 100%;
+            width: 100%;
+        }
+
+            .MNav:hover {
+                text-decoration: none;
+                background-color: rgb(220,220,220);
+            }
+
+        .MSelect {
+            background-color: rgb(220,220,220);
+        }
+
+        .MMessage {
+            padding: 15px;
+        }
+
+            .MMessage > a {
+                display: inline-block;
+                height: 30px;
+                line-height: 30px;
+                padding-left: 40px;
+                background-image: url('/icons/myaccount/email-open.png');
+                background-repeat: no-repeat;
+                color: rgb(54,88,167);
+            }
+
+                .MMessage > a.MNew {
+                    background-image: url('/icons/myaccount/email.png');
+                    background-position-y: 5px;
+                    background-repeat: no-repeat;
+                    color: rgb(19,46,109);
+                    font-weight: bold;
+                }
+
+            .MMessage > span {
+                float: right;
+                line-height: 30px;
+                color: rgb(54,88,167);
+            }
+
+            .MMessage > p {
+                margin-top: 15px;
+                padding: 15px;
+                background-color: white;
+            }
+
+        .MMessageWrap {
+            height: 320px;
+            overflow-y: auto;
+        }
+
+        .ScrollStyle::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            background-color: rgb(222, 226, 230);
+        }
+
+        .ScrollStyle::-webkit-scrollbar {
+            width: 12px;
+            background-color: rgb(222, 226, 230);
+        }
+
+        .ScrollStyle::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: rgb(102, 108, 114);
+        }
+
+        .MMessageWrap textarea {
+            height: 140px;
+            resize: none;
+        }
+    </style>
+}
+@{
+    IEnumerable<MessageWrapper> messInbox = (IEnumerable<MessageWrapper>)ViewBag.Inbox;
+    IEnumerable<MessageWrapper> messSend = (IEnumerable<MessageWrapper>)ViewBag.Sent;
+}
+<div class="row mt-5" style="box-shadow:rgba(0,0,0,0.5) 0 0 10px 0 ;">
+    <div class="col-12 col-md-4 MessageBox h-auto" style="background-color:#F2F2F2;">
+        <div class="row">
+            <div class="col-12 MDarkBlue">
+                <h3 class="py-3"><b>@Localizer["Messages"]</b></h3>
+            </div>
+            <div class="col-4 col-md-12">
+                <a class="MNav MSelect px-2" id="MA_MessageInbox" href="javascript:void(0);">
+                    @Localizer["Inbox"]
+                    <b class="float-right text-danger">@(messInbox == null ? "0" : messInbox.Where(_ => _.IsNew).Count().ToString())</b>
+                </a>
+            </div>
+            <div class="col-4 col-md-12">
+                <a class="MNav px-2" id="MA_MessageSent" href="javascript:void(0);">
+                    @Localizer["Sent"]
+                </a>
+            </div>
+            <div class="col-4 col-md-12">
+                <a class="MNav px-2" id="MA_MessageNew" href="javascript:void(0);">
+                    @Localizer["New message"]
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-8 MessageBox">
+        <div class="MInfo" id="MInbox">
+            <h3 class="border-bottom border-dark MDarkBlue py-3"><b>@Localizer["Inbox"]</b></h3>
+            <div class="MMessageWrap ScrollStyle">
+
+                @if (messInbox != null && messInbox.Count() > 0)
+                {
+                    foreach (var el in messInbox)
+                    {
+                        <div class="MMessage">
+                            <a href="javascript:void(0);" class="@(el.IsNew?"MNew":"")" data-message-id="@el.Id" data-is-share="@el.IsShare">@el.Title</a>
+                            <span>@el.Date.ToString("dd/MM/yyyy HH:mm")</span>
+                            <p class="d-none">@el.Text</p>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="MInfo d-none" id="MSent">
+            <h3 class="border-bottom border-dark MDarkBlue py-3"><b>@Localizer["Sent"]</b></h3>
+            <div class="MMessageWrap ScrollStyle">
+                @if (messSend != null && messSend.Count() > 0)
+                {
+                    foreach (var el in messSend)
+                    {
+                        <div class="MMessage">
+                            <a href="javascript:void(0);">@el.Title</a>
+                            <span>@el.Date.ToString("dd/MM/yyyy HH:mm")</span>
+                            <p class="d-none">@el.Text</p>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+        <div class="MInfo d-none" id="MNew">
+            <h3 class="border-bottom border-dark MDarkBlue py-3">
+                <b>@Localizer["New message"]</b>
+                <img class="float-right" src="~/Icons/MyAccount/Pencil.png" />
+            </h3>
+            <div class="MMessageWrap">
+                <form method="post" asp-action="AddNewMessage" asp-controller="Account">
+                    <div class="form-group MBlue">
+                        <labele>@Localizer["Subject"]</labele>
+                        <input maxlength="150" class="form-control mt-2 shadow-none" type="text" name="Title" />
+                    </div>
+                    <div class="form-group MBlue">
+                        <labele>@Localizer["Message"]</labele>
+                        <textarea maxlength="500" class="form-control mt-2 shadow-none" name="Text"></textarea>
+                    </div>
+                    <input class="btn btn-light MBlue float-right px-3" type="submit" value="@Localizer["Send"]" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#MA_MessageInbox').click(function () {
+                $('.MInfo').addClass('d-none');
+                $('#MInbox').removeClass('d-none');
+                $('.MNav').removeClass('MSelect');
+                $(this).addClass('MSelect');
+            });
+            $('#MA_MessageSent').click(function () {
+                $('.MInfo').addClass('d-none');
+                $('#MSent').removeClass('d-none');
+                $('.MNav').removeClass('MSelect');
+                $(this).addClass('MSelect');
+            });
+            $('#MA_MessageNew').click(function () {
+                $('.MInfo').addClass('d-none');
+                $('#MNew').removeClass('d-none');
+                $('.MNav').removeClass('MSelect');
+                $(this).addClass('MSelect');
+            });
+            $('.MMessage > a.MNew').click(function () {
+                if ($(this).hasClass('MNew')) {
+                    $('#MA_MessageInbox > b').text(Number($('#MA_MessageInbox > b').text()) - 1);
+                    $(this).removeClass('MNew');
+                    $.post('/Account/ReadMessages?MessageId=' + $(this).data('message-id') + '&IsShare=' + $(this).data('is-share'));
+                }
+            });
+            $('.MMessage > a').click(function () {
+                $(this).removeClass('MNew');
+                $(this).siblings('p').toggleClass('d-none');
+            });
+        });
+
+    </script>
+}

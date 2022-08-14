@@ -1,0 +1,126 @@
+﻿
+<form class="w-100">
+    <div class="row p-3 d-none" id="AdProductAddWrapper">
+        <div class="col-12">
+            <h3 class="float-left">Product</h3>
+            <button class="float-right btn btn-outline-secondary" type="button" onclick="$('#AdProductAddWrapper,#DisableBody').addClass('d-none'); EmptyProductForm();">X</button>
+        </div>
+        <div class="col-12 AdProductInputImgWrap">
+            <div style="height:38px;">
+                <input class="d-none" id="AdProductInputImg" type="file" multiple accept="image/jpeg,image/png" />
+                <button type="button" class="btn btn-outline-info" onclick="$('#AdProductInputImg').click()">
+                    <img src="~/Icons/Admin/Folder.png" height="20" />
+                </button>
+                <div class="AdProductImgListSmall ScrollStyle">
+                </div>
+                <span>300x450</span>
+            </div>
+            <div class="AdProductImgList ScrollStyle mt-4">
+            </div>
+
+        </div>
+        <div class="col-6 mt-3">
+            <div class="row">
+                <div class="form-group col-12">
+                    <input class="form-control" type="text" id="AdProductTitleInput" placeholder="Title" required />
+                </div>
+                <div class="form-group col-12">
+                    <input class="form-control" type="text" id="AdProductBrandInput" placeholder="Brand" />
+                </div>
+                <div class="form-group col-12">
+                    <textarea class="form-control" id="AdProductDescriptionInput" placeholder="Description"></textarea>
+                </div>
+                <div class="form-group col-12">
+                    <input class="form-control" id="AdSerchKeysInput" placeholder="Serch Keys" />
+                </div>
+                <div class="input-group col-12">
+                    <input class="form-control" id="AdPriceInput" placeholder="Price" />
+                    <input class="form-control" id="AdSaleInput" placeholder="Sale" />
+                </div>
+                <div class="form-group col-12 mt-3 ">
+                    <label class="pt-1"><input type="checkbox" id="AdIsActiveInput" class="form-check-inline" /> Is Active </label>
+                    <label class="pt-1 float-right"><input class="form-check-inline" id="AdIsMainInput" type="checkbox" />  Is Main</label>
+                </div>
+                <div class="form-group col-auto mt-4">
+                    <button class="btn btn-outline-info" type="button" id="AdAddNewProductButton">Save</button>
+                </div>
+                <div class="form-group col-auto mt-4 ml-auto">
+                    <button class="btn btn-outline-danger" type="button" id="AdDeleteProductButton">Delete</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 mt-3">
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group float-left">
+                        <div class="AdMultiSelect ScrollStyle">
+                            @if (ViewBag.Atributes != null && ViewBag.Atributes.Count > 0)
+                            {
+                                @foreach (var el in ((IEnumerable<Atribute>)ViewBag.Atributes).OrderBy(_ => _._Index))
+                                {
+                                    <label><input class="AdAtributeCheck" type="checkbox" value="@el.Name" data-id="@el.Id" /> @el.Name</label>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <div class="form-group float-right" id="AdProductsGroup">
+                        <div class="form-row">
+                            <div class="col-6">
+                                <select class="form-control" id="AdPGAtribute" disabled>
+                                </select>
+                            </div>
+                            <div class="col-6 small">
+                                <select class="form-control" id="AdPGAtributeValue" disabled>
+                                </select>
+                            </div>
+                            <div class="w-100"></div>
+                            <div class="col-auto mt-2 ml-auto mr-auto" style="line-height:38px;">
+                                <button class="btn btn-outline-info" id="AdAddProductLinkButton" type="button">&#10133;</button>
+
+                            </div>
+                            <div class="col-12 mt-2">
+                                <select class="form-control" id="AdPGCurrentAtributeValue">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-2 ScrollStyle" id="AdProductLinks">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-12">
+                    <div class="input-group" id="AdAtributeValues">
+                        @if (ViewBag.Atributes != null && ViewBag.Atributes.Count > 0)
+                        {
+                            @foreach (var el in ((IEnumerable<Atribute>)ViewBag.Atributes).OrderBy(_ => _._Index))
+                            {
+                                <select class="form-control d-none" data-id="@el.Id" id="AdAtributeValues_@el.Id">
+                                    <option value="0" selected disabled>@el.Name</option>
+                                    @if (el.Values != null && el.Values.Count > 0)
+                                    {
+                                        foreach (var v in el.Values.OrderBy(_ => _._Index))
+                                        {
+                                            <option value="@v.Id">@v.Value </option>
+                                        }
+                                    }
+                                </select>
+                            }
+                        }
+                        <input type="text" class="form-control text-center" id="AdAtributeFirst" disabled />
+                        <button type="button" class="form-control btn btn-outline-info">Create</button>
+                    </div>
+                </div>
+                <div class="col-12 mt-3" id="AdProductAtTable">
+                    <table class="text-center">
+                        <thead>
+                            <tr></tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>

@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Order>
+@using System.Globalization;
+@{
+    Layout = null;
+}
+@foreach (var or in Model)
+{
+    Order.StatusType status = (Order.StatusType)Enum.Parse(typeof(Order.StatusType), or.Status, true);
+    <div class="row border mt-1 ml-1 mr-0">
+        <div class="col-12 py-1 OrderInfo" style="background-color:#ddd;">
+            <div class="row text-center">
+                <div class="col-2 pt-1">@or.OrderNumber</div>
+                <div class="col-2 pt-1">@or.Phone</div>
+                <div class="col-2 pt-1">@or.Email</div>
+                <div class="col-2 pt-1">@or.Address</div>
+                <div class="col-2 pt-1">@((or.ProductsSum * (1 - or.PromoSale / 100) + or.ShipingSum).ToString("N", new CultureInfo("en")).Replace(".00", string.Empty))</div>
+                <div class="col-2"><select data-id="@or.Id" class="form-control orderStatusSelect" asp-for="@status" asp-items="Html.GetEnumSelectList<Order.StatusType>()"></select></div>
+            </div>
+        </div>
+        <div class="col-12 d-none" style="background-color:whitesmoke;">
+            <div class="row py-1">
+                <div class="col">Payment: <b>@or.PaymentMethod</b></div>
+                <div class="col">Sum: <b>@or.ProductsSum.ToString("N", new CultureInfo("en")).Replace(".00", string.Empty)</b></div>
+                <div class="col">Promo Sale: <b>@or.PromoSale.ToString("N", new CultureInfo("en")).Replace(".00", string.Empty) %</b></div>
+                <div class="col">Shipping: <b>@or.ShipingSum.ToString("N", new CultureInfo("en")).Replace(".00", string.Empty)</b></div>
+                <div class="col">Promo Code: <b>@or.PromoCode</b></div>
+            </div>
+            @for (int i = 0; i < or.ProductsInfo.Count(); i++)
+            {
+                var pr = or.ProductsInfo.ElementAt(i);
+                <div class="row py-2 border-top">
+                    <div class="col-auto">
+                        <div class="MOImgWrap">
+                            <a asp-action="Product" asp-controller="Home" asp-route-id="@(pr?.Product?.Id??"")">
+                                <img src="@(string.IsNullOrEmpty(pr.ProductImgId)?"//:0":"/home/GetProductImg/"+pr.ProductImgId)" />
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="row">
+                            <div class="col-12 mb-4 mt-2">
+                                <a asp-action="Product" asp-controller="Home" asp-route-id="@(pr?.Product?.Id??"")" style="color:#3658A7;">@pr.GetTitle("en")</a>
+                            </div>
+                            <div class="col-auto">
+                                Sum: <b>@pr.ProductSum.ToString("N", new CultureInfo("en")).Replace(".00", string.Empty)</b>
+                            </div>
+                            <div class="col-auto">
+                                Qty: <b>@pr.Quantity <span class="pl-5">@(pr?.AtributeAndValue != null ? string.Join(", ", pr.AtributeAndValue.Select(_ => _.Value)) : "") </span> </b>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    </div>
+}

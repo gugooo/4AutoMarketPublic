@@ -1,0 +1,126 @@
+﻿.ProductWrapper {
+    width: 350px;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+    .ProductWrapper > .Product {
+        color: rgb(19,46,109);
+    }
+
+        .ProductWrapper > .Product > span:hover {
+            text-decoration: underline;
+        }
+
+        .ProductWrapper > .Product > div.ProductImgWrap > img {
+            height: 350px;
+        }
+
+        .ProductWrapper > .Product div.ProductImgWrap {
+            height: 350px;
+            width: 350px;
+            overflow: hidden;
+        }
+
+        .ProductWrapper > .Product > div:hover {
+            color: rgb(200,0,13);
+            color:rgb(176, 176, 176);
+            color:rgb(101, 101, 101);
+        }
+
+        .ProductWrapper > .Product:hover {
+            text-decoration: none;
+        }
+
+            .ProductWrapper > .Product:hover img {
+                opacity: 0.8;
+            }
+
+    .ProductWrapper .Heart {
+        display: inline-block;
+        height: 30px;
+        width: 35px;
+        background-image: url('/icons/hearte.png');
+        background-repeat: no-repeat;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+    }
+
+    .ProductWrapper .HeartSelected {
+        background-image: url('/icons/heart.png');
+    }
+
+    .ProductWrapper .Heart:hover {
+        background-size: contain;
+    }
+
+.Star_0, .Star_1, .Star_2, .Star_3, .Star_4, .Star_5 {
+    color: rgb(250,22,63);
+    font-size: 1.5em;
+}
+
+    .Star_0:before {
+        content: "☆☆☆☆☆";
+    }
+
+    .Star_1:before {
+        content: "★☆☆☆☆";
+    }
+
+    .Star_2:before {
+        content: "★★☆☆☆";
+    }
+
+    .Star_3:before {
+        content: "★★★☆☆";
+    }
+
+    .Star_4:before {
+        content: "★★★★☆";
+    }
+
+    .Star_5:before {
+        content: "★★★★★";
+    }
+
+.ProductInfo span, b {
+    color: rgb(19,46,109);
+}
+
+.Product > span {
+    display: block;
+}
+
+.dorpDownStyl {
+    border: none;
+    color: rgb(54,88,167);
+}
+
+    .dorpDownStyl:hover {
+        color: rgb(19,46,109);
+    }
+
+.SectionTree {
+    list-style: none;
+}
+
+.SelectedST {
+    color: rgb(54,88,167);
+    font-weight: bold;
+}
+
+.SectionTree li {
+    margin-top: 10px;
+}
+
+    .SectionTree li a {
+        color: rgb(54,88,167) !important;
+    }
+
+        .SectionTree li a:hover {
+            color: rgb(19,46,109) !important;
+            font-weight: bold;
+            text-decoration: none;
+        }

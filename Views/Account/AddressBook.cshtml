@@ -1,0 +1,164 @@
+﻿@model AddressBookWrap
+
+@{
+    ViewData["Title"] = "AddressBook";
+    Layout = "~/Views/Shared/_MyAccountLayout.cshtml";
+}
+@section Style{
+    <style>
+        .ABHeader {
+            color: rgb(19,46,109);
+        }
+
+            .ABHeader button {
+                height: 40px;
+                width: 40px;
+                font-size: 2em;
+                line-height: 0;
+                font-weight: bold;
+                padding-bottom: 5px !important;
+            }
+
+        .ABAddressBox {
+            display: block;
+            color: rgb(54,88,167);
+            padding: 15px;
+            background-color: rgb(242,242,242);
+            border-radius: 0.25em;
+            height: 100%;
+        }
+
+            .ABAddressBox:hover {
+                background-color: rgb(235,235,235);
+                text-decoration: none;
+            }
+
+            .ABAddressBox > .ABHeader {
+                height: 36px;
+            }
+
+                .ABAddressBox > .ABHeader > div {
+                    height: 34px;
+                    width: 34px;
+                    border: 2px solid rgb(19,46,109);
+                    border-radius: 50%;
+                    font-size: 1.4em;
+                    font-weight: bold;
+                    line-height: 30px;
+                    text-align: center;
+                    color: transparent;
+                }
+
+                    .ABAddressBox > .ABHeader > div.Selected {
+                        color: white;
+                        background-color: rgb(19,46,109);
+                    }
+
+            .ABAddressBox > p {
+                color: rgb(54,88,167);
+            }
+
+        #AddNewAddres > div {
+            position: absolute;
+            z-index: 2001;
+            top: -200px;
+        }
+
+        #AddNewAddres > div {
+            background-color: rgb(242,242,242);
+            border-radius: 0.25em;
+            padding: 15px !important;
+        }
+
+        #AddNewAddres h4 {
+            color: rgb(19,46,109);
+        }
+
+        #AddNewAddres .ANAclose {
+            text-align: right;
+        }
+
+            #AddNewAddres .ANAclose a {
+                font-weight: bold;
+                color: rgb(19,46,109);
+            }
+
+                #AddNewAddres .ANAclose a:hover {
+                    text-decoration: none;
+                    color: rgb(54,88,167);
+                }
+
+        .DeleteAddres {
+            display: block;
+            position: absolute;
+            right: 30px;
+            bottom: 30px;
+            height: 34px;
+            width: 34px;
+            border: 2px solid rgb(19,46,109);
+            background-color: rgb(19,46,109);
+            color: white;
+            border-radius: 50%;
+            line-height: 30px;
+            text-align: center;
+        }
+
+            .DeleteAddres:hover {
+                text-decoration: none;
+                background-color: #dc3545;
+                color: white;
+            }
+
+        ._shadow {
+            box-shadow: rgba(0,0,0,0.3) 0 0 10px 0;
+        }
+    </style>
+}
+<div class="row mt-4">
+    <div class="col-12 text-center ABHeader">
+        <h3 class="mb-3">@Localizer["Add New Address"]</h3>
+        <button class="btn btn-light border p-0" onclick="$('#AddNewAddres,#DisableBody').removeClass('d-none')">+</button>
+    </div>
+    <div class="col-12">
+        @{
+            await Html.RenderPartialAsync("_AddAddressBook", Model.AddNewAddress);
+        }
+    </div>
+    <div class="col-12 mb-3 ABHeader">
+        <h3>@Localizer["Shipping Address"]</h3>
+    </div>
+    @{bool first = true; }
+    @foreach (var el in Model.Addresses)
+    {
+        <div class="col-12 col-md-4 p-3 position-relative">
+            <a class="border ABAddressBox _shadow" asp-action="AddressBook" asp-route-SelectedAddressId="@el.Id">
+                <div class="ABHeader w-100 float-none">
+                    <h4 class="float-left">@el.FName @el.LName</h4>
+                    <div class="float-right @(ViewBag.SAID == el.Id ? "Selected" : "")">&#10003;</div>
+                </div>
+                <h5>@el.Address</h5>
+                <h5>@el.Country</h5>
+                <h5>@el.City</h5>
+                <h5>@el.PostCode</h5>
+
+            </a>
+            @if (!first)
+            {
+                <a class="DeleteAddres" asp-action="DeleteAddress" asp-route-AddressId="@el.Id">X</a>
+            }
+            else { first = false; }
+        </div>
+    }
+
+</div>
+@section Scripts{
+    @if (ViewBag?.hasNewAddress == "true")
+    {
+        <script>
+        $(document).ready(function () {
+            $('#AddNewAddres,#DisableBody').removeClass('d-none');
+        });
+        </script>
+    }
+}
+

@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewData["Title"] = "_AdminLayout";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Style{
+    @{await RenderSectionAsync("Style", false);}
+    <style>
+        .AdminNav a {
+            display: block;
+            font-size: 20px;
+            line-height: 35px;
+            color: #3658A7;
+            border-bottom: 1px solid rgba(0,0,0,0.15);
+        }
+
+            .AdminNav a:hover {
+                text-decoration: none;
+                background-color: rgb(242,242,242);
+                color: #132E6D;
+            }
+
+            .AdminNav a.ASelect {
+                font-weight: bold;
+                color: #132E6D;
+            }
+    </style>
+}
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-3 AdminNav border-right">
+            <a class="@ViewBag.Index border-top" asp-action="Index" asp-controller="Admin">@Localizer["Dashboard"]</a>
+            <a class="@ViewBag.Catalogs" asp-action="Catalogs" asp-controller="Admin">@Localizer["Catalogs / Products"]</a>
+            <a class="@ViewBag.Atributes" asp-action="Atribute" asp-controller="Admin">@Localizer["Attributes"]</a>
+            <a class="@ViewBag.HomePage" asp-action="HomePage" asp-controller="Admin">@Localizer["Homepage Settings"]</a>
+            <a class="@ViewBag.Reviews" asp-action="Review" asp-controller="Admin">@Localizer["Reviews"]</a>
+            <a class="@ViewBag.Users" asp-action="Users" asp-controller="Admin">@Localizer["Users"]</a>
+            <a class="@ViewBag.Promo" asp-action="Promo" asp-controller="Admin">@Localizer["Promo Code"]</a>
+            <a class="@ViewBag.OrderHistory" asp-action="OrderHistory" asp-controller="Admin">@Localizer["Order History"]</a>
+            <a class="@ViewBag.liveChat" asp-action="liveChat" asp-controller="Admin">@Localizer["Live Chat"]</a>
+            <a class="@ViewBag.Messages" asp-action="Messages" asp-controller="Admin">@Localizer["Messages"]</a>
+            <a class="@ViewBag.serchHistory" asp-action="serchHistory" asp-controller="Admin">@Localizer["Search History"]</a>
+            <a class="@ViewBag.Mailing" asp-action="Mailing" asp-controller="Admin">@Localizer["Mailing"]</a>
+            <a class="@ViewBag.ReqCallAndEmail" asp-action="RequestCallAndEmail" asp-controller="Admin">@Localizer["Call&amp;Email Request"]</a>
+        </div>
+        <div class="col-9 position-static">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    @{await RenderSectionAsync("Scripts", false);}
+
+}

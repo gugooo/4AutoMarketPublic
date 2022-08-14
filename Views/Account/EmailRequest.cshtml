@@ -1,0 +1,30 @@
+﻿@{
+    Layout = null;
+    string Culture = (string)ViewBag.culture;
+    string message = (string)ViewBag.message;
+    IEnumerable<Catalog> _model = (IEnumerable<Catalog>)ViewBag.model;
+    string img = (string)ViewBag.imgId;
+}
+<div style="min-width:400px;">
+    <div class="messageHeader" style="min-height: 100px;text-align: center;">
+        <a href="https://www.4auto.am" style="display:block;margin-bottom:10px; background-color: #343a40;"><img src="cid:@img" height="50" /></a>
+        <div style="background-color: #343a40;min-height: 50px;line-height: 50px;">
+            @if (_model != null && _model.Count() > 0)
+            {
+                foreach (var c in _model)
+                {
+                    <a style="color: rgb(255,255,255);padding:0 10px;" href="https://www.4auto.am/Home/Products/@c.Id">@(CultureData.GetDefoultName(c.CultureName, Culture, c.Name))</a>
+                }
+            }
+        </div>
+    </div>
+    <div style="        min-height: 150px;
+        padding: 30px 10px;
+        text-align: center;">
+        @Html.Raw(message)
+    </div>
+    <div style="background-color: #343a40;height: 50px;line-height: 50px; text-align:center;">
+        <a style="color: rgb(255,255,255); padding:0 10px;" href="https://www.4auto.am/Home/About">About 4Auto</a>
+        <a style="color: rgb(255,255,255); padding:0 10px;" href="https://www.4auto.am/Home/Contact">Contact us</a>
+    </div>
+</div>

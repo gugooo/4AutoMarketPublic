@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Order>
+@using System.Globalization;
+@{
+    Layout = null;
+}
+
+@if (Model != null && Model.Count() > 0)
+{
+    foreach (var or in Model)
+    {
+        if (or.ProductsInfo != null && or.ProductsInfo.Count() > 0)
+        {
+            for (int i = 0; i < or.ProductsInfo.Count(); i++)
+            {
+                var pr = or.ProductsInfo.ElementAt(i);
+                <div class="col-12 border mt-3">
+                    <div class="row MOBGGray border-bottom">
+                        <div class="col-2">
+                            <b class="MODarkBlue">@Localizer["Created"]</b><br />
+                            <span class="MOBlue">@or.Created.ToShortDateString()</span>
+                        </div>
+                        <div class="col-2"><b class="MODarkBlue">@or.Status</b></div>
+                        <div class="col-2">
+                            <b class="MODarkBlue">@Localizer["Total"]</b><br />
+                            <span class="MOBlue">@((pr.ProductSum * pr.Quantity * (1 - or.PromoSale / 100)).ToString("N", new CultureInfo("en")).Replace(".00", string.Empty))</span>
+                        </div>
+                        <div class="col-2">
+                            <b class="MODarkBlue">@Localizer["Ship To"]</b><br />
+                            <span class="MOBlue shippingAddress" title="@or.Address">@or.Address</span>
+                        </div>
+                        <div class="col-4 text-right">
+                            <span class="MOBlue">@Localizer["Order"] # @(or.OrderNumber + "-" + (i + 1))</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="MOImgWrap">
+                                <a asp-action="Product" asp-controller="Home" asp-route-id="@(pr?.Product?.Id??"")">
+                                    <img src="@(string.IsNullOrEmpty(pr.ProductImgId)?"//:0":"/home/GetProductImg/"+pr.ProductImgId)" />
+                                </a>
+                            </div>
+                            <div class="pb-0">
+                                <a class="MOBlue" asp-action="Product" asp-controller="Home" asp-route-id="@(pr?.Product?.Id??"")">@pr.ProductTitle</a>
+                            </div>
+                            <div class="col">
+                                <b>@Localizer["Sum"]: </b>@pr.ProductSum.ToString("N", new CultureInfo("en")).Replace(".00", string.Empty)
+                            </div>
+                            <div class="MOProductInfo MODarkBlue pt-0">
+                                <b>@Localizer["Qty"]: @pr.Quantity <span class="pl-5">@(pr?.AtributeAndValue != null ? string.Join(", ", pr.AtributeAndValue.Where(_ => _.AtributeValue.FK_Atribute.IsActive).Select(_ => _.Value)) : "") </span> </b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+}

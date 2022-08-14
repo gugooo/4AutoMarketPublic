@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewData["Title"] = "Checkout Order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using System.Globalization;
+<div class="container" style="color:#3658A7;">
+    <div class="row mt-5 justify-content-center">
+        @{
+            Order order = (Order)ViewBag.Order;
+            string culture = (string)ViewBag.Culture;
+        }
+        @if (order != null)
+        {
+            <div class="col-12 mb-3 text-center">
+                <h3 style="color:#132E6D;">@Localizer["Your order in processing."]</h3>
+            </div>
+            <div class="col-3">
+                @Localizer["Order number"]:
+            </div>
+            <div class="col-3 text-center">
+                @order.OrderNumber
+            </div>
+            <div class="w-100"></div>
+            <div class="col-3">@Localizer["Order sum"]:</div>
+            <div class="col-3 text-center">@((order.ProductsSum * (1 - order.PromoSale / 100) + order.ShipingSum).ToString("N", new CultureInfo("en")).Replace(".00", ""))<small>@(ViewBag.amd ?? "")</small></div>
+            <div class="w-100"></div>
+            <div class="col-3">@Localizer["Phone number"]:</div>
+            <div class="col-3 text-center">@order.Phone</div>
+            <div class="w-100"></div>
+            <div class="col-3">@Localizer["Shipping address"]:</div>
+            <div class="col-3 text-center">@order.Address</div>
+            <div class="w-100 mb-3"></div>
+            <div class="col-3 mt-3  border-bottom">
+                <h5 style="color:#132E6D;">@Localizer["Products"]</h5>
+            </div>
+            <div class="col-3 mt-3 border-bottom text-center">
+                <h5 style="color:#132E6D;">@Localizer["Quantity"]</h5>
+            </div>
+            @foreach (var pr in order.ProductsInfo)
+            {
+                <div class="w-100"></div>
+                <div class="col-3">@pr.GetTitle(culture)</div>
+                <div class="col-3 text-center">@pr.Quantity</div>
+                <div class="w-100"></div>
+                <div class="col-6  border-bottom">
+                    @if (pr.AtributeAndValue != null && pr.AtributeAndValue.Count() > 0)
+                    {
+                        bool second = false;
+                        foreach (var atr in pr.AtributeAndValue.OrderBy(_ => _.Atribute))
+                        {
+                            if (atr.AtributeValue != null && atr.AtributeValue.FK_Atribute.Values.Count > 1 && atr.AtributeValue.FK_Atribute.IsActive)
+                            {
+                                @Html.Raw((second ? ", " : "") + CultureData.GetDefoultName(atr.AtributeValue.FK_Atribute.CultureName, culture, atr.AtributeValue.FK_Atribute.Name) + ": " + CultureData.GetDefoultName(atr.AtributeValue.CultureName, culture, atr.AtributeValue.Value));
+                            }
+                            if (!second) { second = true; }
+                        }
+                    }
+                </div>
+
+            }
+
+        }
+        else
+        {
+            <div class="col-12">
+                <h3>Error please try again.</h3>
+            </div>
+        }
+    </div>
+</div>

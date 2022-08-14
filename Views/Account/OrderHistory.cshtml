@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewData["Title"] = "OrderHistory";
+    Layout = "~/Views/Shared/_MyAccountLayout.cshtml";
+}
+
+@section Style{
+    <style>
+        .MODarkBlue {
+            color: rgb(19,46,109);
+        }
+
+        .MOBlue {
+            color: rgb(54,88,167) !important;
+        }
+
+        .MOBGGray {
+            background-color: rgb(242,242,242);
+            border-radius: 0.25em;
+        }
+
+        .MOImgWrap {
+            height: 90px;
+            width: 60px;
+            overflow: hidden;
+            border: 1px solid black;
+            margin: 15px 15px 15px 0;
+            float: left;
+        }
+
+            .MOImgWrap img {
+                height: 90px;
+            }
+
+        .MOProductInfo {
+            height: 60px;
+            line-height: 45px;
+            padding: 15px;
+        }
+
+        .shippingAddress {
+            display: inline-block;
+            max-width: 100%;
+            max-height: 25px;
+            overflow: hidden;
+        }
+    </style>
+}
+
+<div class="row mt-4">
+    <div class="col-12">
+        <h3 class="MODarkBlue">@Localizer["My Orders"]</h3>
+    </div>
+    <div class="col-12 my-3">
+        <form asp-action="OrderHistory" method="get" id="OrderHistoryInterval">
+            <div class="row">
+                <select id="IntervalDD" class="form-control col-12 col-md-2" onchange="$('#OrderHistoryInterval').submit()" name="Interval">
+                    <option value="1" selected>@Localizer["Past month"]</option>
+                    <option value="3">@Localizer["Past 3 month"]</option>
+                    <option value="6">@Localizer["Past 6 month"]</option>
+                    <option value="12">@Localizer["Past year"]</option>
+                    <option value="0">@Localizer["All time"]</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    <div id="OrdersList" class="row">
+
+        @{
+            await Html.RenderPartialAsync("OrderHistoryI", (IEnumerable<Order>)ViewBag.Orders);
+        }
+    </div>
+    <div class="col-12 text-center">
+        <div id="AdProductListSpiner" class="text-center mt-2 d-none">
+            <div class="spinner-border" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <button id="LoadMoreBtn" class="btn btn-secondary px-5 mt-2" type="button">@Localizer["Load more"]</button>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+    $(document).ready(function () {
+        $("#LoadMoreBtn").click(function () {
+            $("#AdProductListSpiner").removeClass("d-none");
+            var i = $("#LoadMoreBtn").data('i');
+            if (!i && i != 0) {
+                $("#LoadMoreBtn").data('i', 0);
+                i = 0;
+            }
+            $.get("/Account/OrderHistoryI/?Interval=" + $("#IntervalDD").val() + "&index=" + (i + 1), function (data) {
+                $("#OrdersList").append(data);
+                $("#LoadMoreBtn").data('i', i + 1);
+                $("#AdProductListSpiner").addClass('d-none');
+            });
+
+        });
+    });
+    </script>
+}

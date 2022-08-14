@@ -1,0 +1,67 @@
+﻿@model IEnumerable<User>
+@{
+    ViewData["Title"] = "Users";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12">
+        <h3>Users</h3>
+    </div>
+    <div class="col-12">
+        <form asp-action="Users" asp-controller="Admin" method="post">
+            @{
+                var Email = (string)ViewBag.Email;
+                var From = (DateTime)ViewBag.From;
+                var To = (DateTime)ViewBag.To;
+            }
+            <div class="form-row">
+                <div class="input-group">
+                    <input class="form-control" asp-for="@Email" placeholder="Email" style="width:200px;" />
+                    <input type="date" class="form-control" asp-for="@From" />
+                    <input type="date" class="form-control" asp-for="@To" />
+                    <input value="Serch" type="submit" class="form-control btn btn-outline-secondary float-right" />
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-12 mt-4">
+        <div style="max-height:600px; overflow:auto">
+            <table class="w-100" cellpadding="10">
+                <thead>
+                    <tr class="border-bottom small text-center">
+                        <th>Email</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Phone</th>
+                        <th>Date Of Birth</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Address</th>
+                        <th>Registred</th>
+                    </tr>
+                </thead>
+                <tbody class="small text-center">
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                        @foreach (var u in Model.OrderBy(_ => _._Index).Reverse())
+                        {
+                            <tr class="border-bottom">
+                                <td class="text-left">@(string.IsNullOrEmpty(u.UserName) ? "-" : u.UserName)</td>
+                                <td>@(string.IsNullOrEmpty(u.FirstName) ? "-" : u.FirstName)</td>
+                                <td>@(string.IsNullOrEmpty(u.LastName) ? "-" : u.LastName)</td>
+                                <td>@(string.IsNullOrEmpty(u.PhoneNumber) ? "-" : u.PhoneNumber)</td>
+                                <td>@(u.DateOfBirth == DateTime.MinValue ? "-" : u.DateOfBirth.ToShortDateString())</td>
+                                <td>@(string.IsNullOrEmpty(u.Country) ? "-" : u.Country)</td>
+                                <td>@(string.IsNullOrEmpty(u.City) ? "-" : u.City)</td>
+                                <td>@(string.IsNullOrEmpty(u.Address) ? "-" : u.Address)</td>
+                                <td>@u.Registred.ToShortDateString()</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>

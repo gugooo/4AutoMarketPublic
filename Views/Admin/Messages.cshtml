@@ -1,0 +1,191 @@
+﻿
+@{
+    ViewData["Title"] = "Messages";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@using _4AutoMarket.Models;
+@section Style{
+    <style>
+        #AdEmailList {
+            height: 600px;
+            overflow: auto;
+            border: 1px solid rgb(240,240,240);
+            margin-top: 8px;
+        }
+
+            #AdEmailList > div {
+                height: 30px;
+                line-height: 30px;
+                border-bottom: 1px solid rgb(240,240,240);
+            }
+
+                #AdEmailList > div:hover {
+                    background-color: rgb(240,240,240);
+                    cursor: pointer;
+                }
+
+                #AdEmailList > div > b {
+                    display: inline-block;
+                    width: 30px;
+                    color: red;
+                    text-align: center;
+                }
+
+                #AdEmailList > div > span {
+                    padding-left: 10px;
+                }
+
+            #AdEmailList .AdSelectedEmail {
+                background-color: rgb(220,220,220);
+            }
+
+        #AdMessagesWrap {
+            height: 300px;
+            overflow-y: auto;
+            padding: 8px;
+            margin: 8px;
+            border: 1px solid rgb(240,240,240);
+        }
+
+        #AdNewMessage {
+            height: 150px;
+            width: 400px;
+            resize: none;
+            margin: 8px;
+            padding: 8px;
+        }
+
+        #AdNewEmail {
+            width: 400px;
+            margin-left: 8px;
+        }
+
+        #AdNewTitle {
+            width: 400px;
+            margin-left: 8px;
+            margin-top: 8px;
+        }
+
+        #AdNewMessageForm > input[type="submit"] {
+            margin-left: 8px;
+        }
+
+        #AdMessagesWrap > div.AdOperatorMess {
+            text-align: left;
+        }
+
+        #AdMessagesWrap > div.AdUserMess {
+            text-align: right;
+        }
+
+        #AdMessagesWrap div.AdOperatorMess > div {
+            display: inline-block;
+            width: auto;
+            margin: 8px;
+            padding: 8px;
+            background-color: whitesmoke;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 0.25em;
+        }
+
+        #AdMessagesWrap div.AdUserMess > div {
+            display: inline-block;
+            width: auto;
+            margin: 8px;
+            padding: 8px;
+            background-color: rgba(54, 88, 167, 0.35);
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 0.25em;
+        }
+    </style>
+
+}
+@{
+    IEnumerable<User> users = (IEnumerable<User>)ViewBag.Users;
+}
+<div class="row">
+    <div class="col-12 border-bottom">
+        <h4 class="mb-4">Messages</h4>
+        <form asp-action="Messages" asp-controller="Admin" method="post">
+            @{
+                AdminMessagesFiltr filter = (AdminMessagesFiltr)ViewBag.filtr;
+            }
+            <div class="form-inline">
+                <div class="col-2 text-center">
+                    <label asp-for="@filter.OnlyNew">Only New</label>
+                    <input asp-for="@filter.OnlyNew" name="OnlyNew" />
+                </div>
+                <div class="col-3">
+                    <input class="form-control" asp-for="@filter.from" name="from" type="date" />
+                </div>
+                <div class="col-3"><input class="form-control" asp-for="@filter.to" name="to" type="date" /></div>
+                <div class="col-3"><input class="form-control" asp-for="@filter.Email" name="Email" placeholder="Email" /></div>
+                <div class="col-1"><input class="btn btn-outline-secondary" type="submit" value="Serch" /></div>
+            </div>
+        </form>
+    </div>
+    <div class="col-4">
+        <div class="ScrollStyle" id="AdEmailList">
+            @if (users != null && users.Count() > 0)
+            {
+                foreach (var u in users)
+                {
+                    <div data-email="@u.Email">
+                        <b>@((u.UserSend != null && u.UserSend.Count > 0) ? u.UserSend.Where(_ => _.IsNew).Count() : 0)</b>
+                        <span>@u.Email</span>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="col-8">
+        <div id="AdMessagesWrap" class="ScrollStyle">
+        </div>
+        <form id="AdNewMessageForm">
+            <input id="AdNewEmail" class="form-control" type="text" name="email" placeholder="Email" />
+            <input id="AdNewTitle" class="form-control" type="text" name="title" placeholder="Title" />
+            <textarea id="AdNewMessage" class="form-control" name="mess" placeholder="Message"></textarea>
+            <button class="btn btn-outline-secondary px-5 ml-2" type="button">Send</button>
+        </form>
+    </div>
+</div>
+@section Scripts{
+    <script>
+    $(document).ready(function () {
+        $('#AdEmailList > div[data-email]').click(function () {//get Messages
+            $('#AdEmailList .AdSelectedEmail').removeClass('AdSelectedEmail');
+            $('#AdMessagesWrap').empty();
+            $('#AdNewEmail').val($(this).data('email'));
+            $('#AdNewMessage').val('');
+            $('#AdNewTitle').val('');
+            $(this).find('b').text(0);
+            $(this).addClass('.AdSelectedEmail');
+            $.post("/Admin/getMessages?email=" + $(this).data('email'), function (data) {
+                if (data.error) {
+                    alert(data.error);
+                }
+                else if (data.res && data.res.length) {
+                    $.each(data.res, function (i, v) {
+                        var mess = '<div class="' + (v.is_user ? 'AdUserMess' : 'AdOperatorMess') + '"><div><b>' + v.title + '</b> <span>' + v.send + '</span><p>' + v.mess + '</p></div></div>';
+                        $('#AdMessagesWrap').append(mess);
+                    });
+                }
+            }).then($('#AdMessagesWrap').animate({ scrollTop: $('#AdMessagesWrap')[0].scrollHeight }, 1000));
+
+        });
+        $('#AdNewMessageForm button').click(function () {//send Messages
+            var dn = new Date();
+            var timeNow = ((dn.getHours() < 10) ? "0" : "") + dn.getHours() + ":" + ((dn.getMinutes() < 10) ? "0" : "") + dn.getMinutes();
+            $.post("/Admin/sendtMessages", $('#AdNewMessageForm').serialize(), function (data) {
+                if (data.error) { alert(data.error); }
+                else {
+                    var mess = '<div class="AdOperatorMess"><div><b>' + $('#AdNewTitle').val() + '</b> <span>' + timeNow + '</span><p>' + $('#AdNewMessage').val() + '</p></div></div>';
+                    $('#AdMessagesWrap').append(mess);
+                    $('#AdMessagesWrap').animate({ scrollTop: $('#AdMessagesWrap')[0].scrollHeight }, 1000);
+                }
+            });
+        });
+    });
+
+    </script>
+}

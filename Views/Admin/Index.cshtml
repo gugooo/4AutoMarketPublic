@@ -1,0 +1,114 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@section Style{
+    <style>
+        .infoBar {
+            text-align: center;
+            display: inline-block;
+            height: 80px;
+            width: 180px;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 0.25em;
+            margin: 8px;
+        }
+
+            .infoBar h5 {
+                background-color: deepskyblue;
+                margin: 0;
+                height: 30px;
+                line-height: 30px;
+            }
+
+            .infoBar a {
+                color: orangered;
+                font-weight: bold;
+                display: inline-block;
+                width: 100%;
+                height: 50px;
+                line-height: 50px;
+            }
+    </style>
+}
+
+<div class="row">
+    <div class="col-12 mb-3">
+        <h3 class="float-left">Dashboard</h3>
+        <a class="btn btn-outline-primary float-right" asp-action="Index" asp-controller="Admin">Refresh</a>
+    </div>
+    <div class="col-12 p-1">
+        <div class="infoBar">
+            <h5>Users</h5>
+            <a asp-action="Users" asp-controller="Admin">@(ViewBag.users ?? "0")</a>
+        </div>
+        <div class="infoBar">
+            <h5>New Order</h5>
+            <a asp-action="OrderHistory" asp-controller="Admin">@(ViewBag.neworders ?? "0")</a>
+        </div>
+        <div class="infoBar">
+            <h5>liveChat</h5>
+            <a asp-action="liveChat" asp-controller="Admin">@(ViewBag.livechat ?? "0")</a>
+        </div>
+        <div class="infoBar">
+            <h5>Messag</h5>
+            <a asp-action="Messages" asp-controller="Admin">@(ViewBag.messages ?? "0")</a>
+        </div>
+        <div class="infoBar">
+            <h5>Request Call</h5>
+            <a asp-action="RequestCallAndEmail" asp-controller="Admin">@(ViewBag.reqCell ?? "0")</a>
+        </div>
+        <div class="infoBar">
+            <h5>Request Email</h5>
+            <a asp-action="RequestCallAndEmail" asp-controller="Admin">@(ViewBag.reqEmail ?? "0")</a>
+        </div>
+        <div class="infoBar">
+            <h5>New Subscribers</h5>
+            <a asp-action="Mailing" asp-controller="Admin">@(ViewBag.subEmail ?? "0")</a>
+        </div><div class="infoBar">
+            <h5>New Reviews</h5>
+            <a asp-action="Review" asp-controller="Admin">@(ViewBag.newReviews ?? "0")</a>
+        </div>
+    </div>
+    <div class="col-12 mt-5">
+        <h5>Shipping Setings</h5>
+        @{
+            decimal order = ((decimal)(ViewBag.orderSum ?? 0));
+            decimal more = (decimal)(ViewBag.whenMore ?? 0);
+            decimal less = (decimal)(ViewBag.whenLess ?? 0);
+
+        }
+        <div class="form-inline">
+            <div class="form-group col-3">
+                <label asp-for="@order" class="pl-1">Order Sum</label>
+                <input id="shippingOrderSum" asp-for="@order" class="form-control" type="text" placeholder="Order Sum" value="@order.ToString("0")" />
+            </div>
+            <div class="form-group col-3">
+                <label asp-for="@more" class="pl-1">When more</label>
+                <input id="shippingWhenMore" asp-for="@more" class="form-control" type="text" placeholder="Shipping Sum" value="@more.ToString("0")" />
+            </div>
+            <div class="form-group col-3">
+                <label asp-for="@less" class="pl-1">When less</label>
+                <input id="shippingWhenLess" asp-for="@less" class="form-control" type="text" placeholder="Shipping Sum" value="@less.ToString("0")" />
+            </div>
+            <div class="col-3 mt-4">
+                <button onclick="shippingChange()" class="btn btn-outline-info float-right" type="button">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+    function shippingChange() {
+        $.post("/Admin/changeShipping", { orderSum: $('#shippingOrderSum').val(), whenMore: $('#shippingWhenMore').val(), whenLess: $('#shippingWhenLess').val() }, function (data) {
+            if (data && data.res) {
+                alert("Shipping setings is change.");
+            }
+            else {
+                alert(data.err);
+            }
+        });
+    }
+    </script>
+}

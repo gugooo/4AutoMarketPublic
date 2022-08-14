@@ -1,0 +1,247 @@
+﻿
+@{
+    ViewData["Title"] = "Bag";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using System.Globalization;
+@section Style{
+    <style>
+        .BProduct {
+            height: auto;
+            width: 100%;
+            padding: 0 25px 25px 25px;
+            background-color: rgb(245,245,245);
+            margin-top: 15px;
+        }
+
+        .TextDarkStyle {
+            color: rgb(19,46,109) !important;
+        }
+
+        .TextWhiteStyle {
+            color: rgb(54,88,167) !important;
+        }
+
+        .BProduct .BImg {
+            overflow: hidden;
+        }
+
+            .BProduct .BImg img {
+                width: 100%;
+            }
+
+        .BInfo {
+            padding-left: 15px;
+        }
+
+        .BChak {
+            width: 100%;
+            padding: 20px;
+            background-color: rgb(245,245,245);
+            margin-top: 15px;
+        }
+    </style>
+}
+<div class="container">
+    <div class="row TextDarkStyle">
+
+        <div class="col-12 text-center my-5">
+            <h3>@Localizer["Shopping Bag"]</h3>
+        </div>
+        <div class="col-12">
+            <h3>
+                @ViewBag.err
+            </h3>
+            <h3>
+                @ViewBag.H
+            </h3>
+            <h3>
+                @ViewBag.H5
+            </h3>
+            <h3>
+                @ViewBag.HS
+            </h3>
+            <h4>
+                @ViewBag.HTest
+            </h4>
+            <h4>
+                @ViewBag.HTF
+            </h4>
+        </div>
+        <div class="col-12 col-md-7">
+            @{
+                List<ProductBagViewModel> products = (List<ProductBagViewModel>)ViewBag.Products;
+                string culture = (string)ViewBag.Culture;
+                decimal shipping = (decimal)ViewBag.Shipping;
+                var dCulture = new CultureInfo("en");
+            }
+            @if (products != null && products.Count() > 0)
+            {
+                foreach (var pr in products)
+                {
+                    <div class="BProduct" data-id="@pr.ProductId">
+                        <div class="text-right"><a class="deleteProduct TextDarkStyle text-decoration-none" href="javascript:void(0);">X</a></div>
+                        <div class="row">
+                            <div class="BImg col-12 col-md-6 mt-2">
+                                <img src="@(string.IsNullOrEmpty(pr.ImgId)?"//:0":"/home/GetProductImg/"+pr.ImgId)" />
+                            </div>
+                            <div class="BInfo TextWhiteStyle col-12 col-md-6 mt-2">
+                                <div>
+                                    <p><a asp-action="Product" asp-controller="Home" asp-route-id="@pr.ProductId" class="TextDarkStyle"><b>@pr.Title </b></a></p>
+                                </div>
+                                <p>@Localizer["Total"]: <b class="TextDarkStyle">@(((string.IsNullOrEmpty(pr.Sale) || pr.Sale == "0") ? pr.Price : pr.Sale))</b><small> @(ViewBag.amd ?? "")</small></p>
+                                @if (pr.Atributes != null && pr.Atributes.Count() > 0)
+                                {
+                                    foreach (var atr in pr.Atributes)
+                                    {
+                                        <p class="atrVal@((atr.FK_Atribute.Values.Count() == 1 && !atr.FK_Atribute.IsActive)?" d-none":"")" data-id="@atr.Id">@CultureData.GetDefoultName(atr.FK_Atribute.CultureName, culture, atr.FK_Atribute.Name): <b class="TextDarkStyle">@CultureData.GetDefoultName(atr.CultureName, culture, atr.Value)</b></p>
+                                    }
+                                }
+                                <input class="text-center form-control mt-4 @(pr.Quantity>pr.MaxQuantity?"border-danger":"")" style=" width: 100px;" type="number" min="1" max="@pr.MaxQuantity" data-sum="@((pr.dSale!=0?pr.dSale:pr.dPrice).ToString().Replace(',','.'))" value="@pr.Quantity" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+        <div class="col-12 col-md-5">
+            <div class="BChak TextWhiteStyle">
+                <h4 class="mb-4 TextDarkStyle">@Localizer["Shopping Bag Total"]</h4>
+                <span>@Localizer["Add Promo Code"]</span>
+                <div class="form-inline">
+                    <div class="form-group col p-0" id="PromoCodeWrap">
+                        <input class="form-control" type="text" />
+                        <button type="button" class="btn btn-light form-control ml-md-2 mt-2 mt-md-0 border">@Localizer["ADD"]</button>
+                        <p class="text-danger m-0 pl-1" style="line-height:38px;"></p>
+                    </div>
+                </div>
+                <div class="mt-5" style="width:250px;">
+                    <p>
+                        @Localizer["Order Value"]:<small class="float-right pl-1" style="line-height:24px;"> @(ViewBag.amd ?? "")</small><b id="BagValue" class="float-right TextDarkStyle">@(products == null ? "0" : products.Sum(_ => ((_.dSale != 0) ? (_.Quantity * _.dSale) : (_.dPrice * _.Quantity))).ToString("N", dCulture).Replace(".00", string.Empty))</b>
+                    </p>
+                    <p>
+                        @Localizer["Shipping"]:<small class="float-right pl-1" style="line-height:24px;"> @(ViewBag.amd ?? "")</small><b id="BagShipping" class="float-right TextDarkStyle" data-sum="@shipping.ToString().Replace(',','.')">@shipping.ToString("N", dCulture).Replace(".00", string.Empty)</b>
+                    </p>
+                    <p class="mt-5">
+                        @Localizer["Total"]:<small class="float-right pl-1" style="line-height:24px;"> @(ViewBag.amd ?? "")</small><b id="BagTotal" class="float-right TextDarkStyle">@((products == null ? "0" : (shipping + products.Sum(_ => ((_.dSale != 0) ? (_.Quantity * _.dSale) : (_.dPrice * _.Quantity)))).ToString("N", dCulture).Replace(".00", string.Empty)))</b>
+                    </p>
+                </div>
+                <a id="CheckoutButton" class="btn btn-secondary col mt-3" asp-action="Checkout" asp-controller="Home">@Localizer["Continue to Checkout"]</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+            $('.BProduct input').change(function () {
+                var products = $.cookie("ProductList");
+                products = products && JSON.parse(products);
+                if (products && products.length > 0) {
+                    var prId = $(this).closest('.BProduct').data('id');
+                    var atrValIds = $(this).closest('.BProduct').find('.atrVal').map(function () { return $(this).data('id'); });
+                    for (var i = 0; i < products.length; i++) {
+                        if (products[i].id == prId && $(products[i].atrs).not(atrValIds.toArray()).length == 0) {
+                            products[i].count = Number(this.value);
+                            $.cookie("ProductList", JSON.stringify(products), { expires: 365, path: '/' });
+                            prCount = 0;
+                            $.each(products, function () { prCount = prCount + this.count; })
+                            $('#ShoppingBagWrap small').text(prCount > 99 ? '99+' : prCount);
+                            break;
+                        }
+                    }
+                }
+                if (Number($(this).val()) > Number($(this).attr('max'))) {
+                    $(this).addClass('border-danger');
+                }
+                else {
+                    $(this).removeClass('border-danger');
+                }
+                UpdateBagSum();
+            });
+
+
+
+            $('.deleteProduct').click(function () {
+                var products = $.cookie("ProductList");
+                products = products && JSON.parse(products);
+                if (products && products.length > 0) {
+                    var prId = $(this).closest('.BProduct').data('id');
+                    var atrValIds = $(this).closest('.BProduct').find('.atrVal').map(function () { return $(this).data('id'); });
+                    var newProducts = $.grep(products, function (p) { return p.id != prId || $(p.atrs).not(atrValIds.toArray()).length != 0 });
+                    if (newProducts.length != products.length) {
+                        $.cookie("ProductList", JSON.stringify(newProducts), { expires: 365, path: '/' });
+                        prCount = 0;
+                        $.each(newProducts, function () { prCount = prCount + this.count; })
+                        $('#ShoppingBagWrap small').text(prCount > 99 ? '99+' : prCount);
+                    }
+                }
+                $(this).closest('.BProduct').remove();
+            });
+            var checkBtnSelected = false;
+            $('#CheckoutButton').click(function (e) {
+                if ($('.BInfo input.border-danger').length > 0) e.preventDefault();
+                if ($("#PromoCodeWrap").data('code') && !checkBtnSelected) {
+                    checkBtnSelected = true;
+                    $('#CheckoutButton').attr('href', $('#CheckoutButton').attr('href') + "?promoCode=" + $("#PromoCodeWrap").data('code'));
+                }
+            });
+
+            $('#PromoCodeWrap button').click(function (e) {
+                var code = $('#PromoCodeWrap input').val();
+                $('#PromoCodeWrap p').empty();
+                $('#PromoCodeWrap input').removeClass('bg-success');
+                $("#PromoCodeWrap").data('promoSale', 0);
+                $("#PromoCodeWrap").data('code', '');
+                UpdateBagSum();
+                if (!code || !code.length) { e.preventDefault(); return false; }
+                $.ajax({
+                    url: "/Home/getPromoCode/?code=" + code,
+                    type: "POST",
+                    contentType: "application/Json",
+                    beforeSend: function () {
+                        $('#PromoCodeWrap').append('<div id="AdProductListSpiner" class="text-center float-left"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div></div>');
+                    },
+                    success: function (data) {
+                        $("#AdProductListSpiner").remove();
+                        if (data) {
+                            if (data.error) {
+                                $('#PromoCodeWrap p').text(data.error);
+                                e.preventDefault();
+                                return false;
+                            }
+                            else if (data.res) {
+                                $('#PromoCodeWrap input').addClass('bg-success');
+                                if (Number(data.res)) {
+                                    $("#PromoCodeWrap").data('promoSale', Number(data.res));
+                                    $("#PromoCodeWrap").data('code', $("#PromoCodeWrap input").val());
+                                    UpdateBagSum();
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+        });
+        function UpdateBagSum() {
+            var total = 0;
+            var promo = $("#PromoCodeWrap").data('promoSale') ? $("#PromoCodeWrap").data('promoSale') : 0;
+            $('.BProduct input').each(function () { total += Number($(this).data('sum')) * Number(this.value); });
+            $('#BagValue').text(String((total * (1 - promo / 100)).toFixed(0)).replace(/(.)(?=(\d{3})+$)/g, '$1,'));
+            $('#BagTotal').text(String(getShippingSum(Number((total * (1 - promo / 100)))) + Number((total * (1 - promo / 100)).toFixed(0))).replace(/(.)(?=(\d{3})+$)/g, '$1,'));
+        }
+        function getShippingSum(orderSum) {
+            console.log(orderSum);
+            if (Number(orderSum) >@((int)ViewBag.ShippingOrderSum)) {
+                $('#BagShipping').text(String(@((int)ViewBag.shippingWhenMore)).replace(/(.)(?=(\d{3})+$)/g, '$1,'));
+                return @((int)ViewBag.shippingWhenMore);
+            }
+            $('#BagShipping').text(String(@((int)ViewBag.shippingWhenLess)).replace(/(.)(?=(\d{3})+$)/g, '$1,'));
+            return @((int)ViewBag.shippingWhenLess);
+        }
+    </script>
+}

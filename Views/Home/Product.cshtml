@@ -1,0 +1,478 @@
+﻿
+@{
+    ViewData["Title"] = "Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string culture = (string)ViewBag.Culture;
+}
+
+@section Style{
+    <link href="~/fotorama/fotorama.min.css" rel="stylesheet" />
+    <style>
+        .TextDarkStyle {
+            color: rgb(19,46,109) !important;
+        }
+
+        .TextWhiteStyle {
+            color: rgb(54,88,167) !important;
+        }
+
+        
+
+
+
+
+        .Heart {
+            display: inline-block;
+            height: 30px;
+            width: 35px;
+            background-image: url('/icons/hearte.png');
+            background-repeat: no-repeat;
+            margin-left: 10px;
+        }
+
+            .Heart:hover {
+                background-size: contain;
+            }
+
+        .HeartSelected {
+            background-image: url('/icons/heart.png');
+        }
+
+        .Color {
+            float: left;
+            text-align: center;
+            padding: 0 5px;
+        }
+
+            .Color div {
+                cursor: pointer;
+                height: 20px;
+                width: 40px;
+                margin: 5px auto;
+                border: 1px solid rgba(0, 0, 0, 0.25);
+            }
+
+                .Color div:hover {
+                    border: 1px solid rgba(0, 0, 0, 0.8);
+                }
+
+        .selectColor {
+            outline: 2px solid lightskyblue;
+        }
+
+        .addBtn {
+            cursor: pointer;
+            background-color: lightgray;
+        }
+
+            .addBtn:hover {
+                background-color: darkgray;
+            }
+
+        .RateWrap {
+            display: inline-block;
+            position: relative;
+            height: 43px;
+            width: 135px;
+            overflow: hidden;
+        }
+
+        .Rate {
+            font-size: 2em;
+            color: rgb(250,22,63);
+        }
+
+        .rEl {
+            cursor: pointer;
+            position: absolute;
+            top: 0;
+            height: 43px;
+            width: 27px;
+        }
+
+        .r1 {
+            z-index: 5;
+        }
+
+        .r2 {
+            left: 27px;
+            z-index: 4;
+        }
+
+        .r3 {
+            left: 54px;
+            z-index: 3;
+        }
+
+        .r4 {
+            left: 81px;
+            z-index: 2;
+        }
+
+        .r5 {
+            left: 108px;
+            z-index: 1;
+        }
+
+        .r1:hover ~ .Rate > span:before {
+            content: "★";
+        }
+
+        .r2:hover ~ .Rate > span:before {
+            content: "★★";
+        }
+
+        .r3:hover ~ .Rate > span:before {
+            content: "★★★";
+        }
+
+        .r4:hover ~ .Rate > span:before {
+            content: "★★★★";
+        }
+
+        .r5:hover ~ .Rate > span:before {
+            content: "★★★★★";
+        }
+
+        .rSelected:before {
+            content: "★★★★★";
+            display: block;
+            position: absolute;
+            right: 0;
+            height: 43px;
+            width: 135px;
+            font-size: 2em;
+            color: rgb(250,22,63);
+        }
+
+        .RateDisable {
+            position: absolute;
+            height: 252px;
+            width: 100%;
+            background-color: rgba(0,0,0,0.08);
+            margin-left: -15px;
+            z-index: 10;
+            line-height: 252px;
+            text-align: center;
+            border-radius: 0.25em;
+        }
+
+        .productAtrs select > option:disabled {
+            background-color: lightgrey;
+            color: whitesmoke;
+        }
+
+        .productAtrs .textDelete {
+            text-decoration: line-through;
+        }
+
+    </style>
+}
+
+<div class="container">
+    <div class="row mt-5">
+        @{
+            ProductView product = (ProductView)ViewBag.Product;
+        }
+        <div class="col-12 col-md-6">
+            <div class="fotorama" data-nav="thumbs" data-allowfullscreen="true">
+
+                @if (product.Imgs != null && product.Imgs.Count() > 0)
+                {
+                    @for (int i = 0; i < product.Imgs.Count(); i++)
+                    {
+                        var img = product.Imgs.ElementAt(i);
+                        <a href="@(string.IsNullOrEmpty(img)?"//:0":"/home/GetProductImg/"+img)"> <img src="@(string.IsNullOrEmpty(img)?"//:0":"/home/GetProductImg/"+img)" width="100" height="100"/></a>
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-9 productAtrs">
+                    <h3 class="TextDarkStyle"><span id="productTitle">@product.Title</span> <a class="float-right Heart" href="javascript:void(0);"></a></h3>
+                    @if (!string.IsNullOrEmpty(product.Brand))
+                    {<h4 class="TextDarkStyle mt-3" id="productBrand">@product.Brand</h4>}
+                    <h5 class="TextWhiteStyle mb-5" id="productPrice">@Html.Raw((string.IsNullOrEmpty(product.Sale) || product.Sale == "0") ? product.Price : ("<del>" + product.Price + "</del> " + product.Sale))</h5>
+                    @if (!string.IsNullOrEmpty(product.Description))
+                    {
+                    <h6 class="mt-5" id="productDescription">@product.Description</h6>
+                    }
+                    @if (product.Atributes != null && product.Atributes.Count() > 0)
+                    {
+                        for (int i = 0; i < product.Atributes.Count(); i++)
+                        {
+
+                            var atr = product.Atributes.ElementAt(i);
+                            if (atr.Key.Name.ToUpper() == "COLOR")
+                            {
+                    <div class="my-3" id="atributeColor" style="    height: 70px;
+        overflow-x: auto;
+        overflow-y: hidden;
+    ">
+                        @for (int j = 0; atr.Value != null && j < atr.Value.Count; j++)
+                                    {
+                                        var atrVal = atr.Value.ElementAt(j);
+                        <div class="Color atrVal" data-id="@atrVal.Id">@CultureData.GetDefoultName(atrVal.CultureName, culture, atrVal.Value)<div class="@(product.LinkAtrVal!=null?(product.LinkAtrVal.Id==atrVal.Id?"selectColor":""):(j==0?"selectColor":""))" style=" background-color: @atrVal.Value;" title="@atrVal.Value"></div></div>
+                                    }
+                        <select id="colorSelect" class="d-none" data-id="@atr.Key.Id">
+                            @for (int j = 0; atr.Value != null && j < atr.Value.Count; j++)
+                                        {
+                                            var atrVal = atr.Value.ElementAt(j);
+                                            if (product.LinkAtrVal != null)
+                                            {
+                                                if (product.LinkAtrVal.Id == atrVal.Id)
+                                                {
+                            <option selected value="@atrVal.Id"></option>
+                                                    continue;
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                if (j == 0)
+                                                {
+                            <option selected value="@atrVal.Id"></option>
+                                                    continue;
+                                                }
+                                            }
+                            <option value="@atrVal.Id"></option>
+                                        }
+                        </select>
+                    </div>
+                            }
+                            else
+                            {
+                    <div class="form-group">
+                        <select class="form-control@((atr.Key.Values.Count==1 && !atr.Key.IsActive)?" d-none":"")" data-id="@atr.Key.Id">
+                            <option value="">@CultureData.GetDefoultName(atr.Key.CultureName, culture, atr.Key.Name)</option>
+                            @for (int j = 0; atr.Value != null && j < atr.Value.Count; j++)
+                                        {
+                                            var atrVal = atr.Value.ElementAt(j);
+                                            if (product.LinkAtrVal != null && product.LinkAtrVal.Id == atrVal.Id)
+                                            {
+                            <option selected value="@atrVal.Id">@CultureData.GetDefoultName(atrVal.CultureName, culture, atrVal.Value)</option>
+                                                continue;
+                                            }
+                                            if (atr.Key.Values.Count == 1 && !atr.Key.IsActive)
+                                            {
+                            <option selected value="@atrVal.Id">@CultureData.GetDefoultName(atrVal.CultureName, culture, atrVal.Value)</option>
+                                            }
+                                            else
+                                            {
+                            <option value="@atrVal.Id">@CultureData.GetDefoultName(atrVal.CultureName, culture, atrVal.Value)</option>
+                                            }
+                                        }
+                        </select>
+                    </div>
+                            }
+                        }
+                    }
+                    <a class="btn addBtn TextDarkStyle col" id="buttonAddToBag"><b>@Localizer["Add to Bag"]</b></a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 mt-5 pt-5">
+            @if (!Context.User.Identity.IsAuthenticated)
+            {
+            <div class="RateDisable">@Localizer["Sign In then add Reviews"]</div>
+            }
+            <div class="float-left mr-2" style="line-height:55px; ">@Localizer["Rate"]:</div>
+            <div class="RateWrap">
+                <div class="rEl r1" title="1"></div>
+                <div class="rEl r2" title="2"></div>
+                <div class="rEl r3" title="3"></div>
+                <div class="rEl r4" title="4"></div>
+                <div class="rEl r5" title="5"></div>
+                <div class="Rate" style="height:43px;width:135px;"><span>☆☆☆☆☆</span></div>
+            </div>
+            <div>
+                <form id="reviewForm">
+                    <input type="hidden" name="Rating" id="rateInput" />
+                    <input type="hidden" name="ProductId" value="@ViewBag.ID" />
+                    <div class="form-group">
+                        <textarea class="form-control" style="resize:none; height:135px;" placeholder="@Localizer["Write review"]" name="Description"></textarea>
+                        <button type="button" onclick="sendReview();" class="btn addBtn TextDarkStyle mt-2 px-5"><b>@Localizer["Add review"]</b></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-12 mt-5 border-bottom">
+            <h3>@Localizer["Reviews"]</h3>
+            <div class="pl-2">
+                @{ IEnumerable<Review> reviews = (IEnumerable<Review>)ViewBag.Reviews;}
+                @if (reviews != null && reviews.Count() > 0)
+                {
+                    foreach (var re in reviews)
+                    {
+                <div class="border-top">
+                    <div class="Rate"><span>@(new String('★', re.Rating) + new String('☆', 5 - re.Rating))</span></div>
+                    <h5><b>@(re?.FK_User?.FirstName ?? "" + " " + re?.FK_User?.LastName ?? "User")</b> <span class="float-right">@re.Date.ToShortDateString()</span></h5>
+                    <p>
+                        @re.Description
+                    </p>
+                </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/fotorama/fotorama.min.js"></script>
+    <script>
+        function sendReview() {
+            $.post('/Home/Review/', $('#reviewForm').serialize(), function (data) {
+                if (data && data.res) alert("Thank You for review.");
+                else alert("Please reload page and try again.");
+            });
+            $('#reviewForm').resetForm();
+        }
+        var atrValues;
+        $(document).ready(function () {
+
+
+           
+
+            $.post("/home/getAtributes/@product.Id", function (resp) { atrValues = resp; updateAtributes(); });
+            
+            $('.RateWrap .rEl').click(function () {
+                $('#rateInput').val(this.title);
+                   if ($(this).hasClass('rSelected')) $(this).removeClass('rSelected');
+                else {
+                    $('.RateWrap .rEl').removeClass('rSelected');
+                    $(this).addClass('rSelected');
+                   }
+               });
+            $('.atrVal').click(function () {
+                   if ($(this).hasClass('textDelete')) return;
+                   if ($('#colorSelect').val() != $(this).data('id')) {
+                    $('.atrVal div.selectColor').removeClass('selectColor');
+                    $(this).children('div').addClass('selectColor');
+                    $('#colorSelect').val($(this).data('id'));
+                    $('#colorSelect').trigger('change');
+                   }
+               });
+
+
+
+            $('.productAtrs select').change(function () {
+                $(this).removeClass('border-danger');
+                updateAtributes();
+            });
+
+
+
+            $('.Heart').click(function () {
+                   if ($(this).hasClass("HeartSelected")) {
+                    $(this).removeClass("HeartSelected");
+                       var ids = $.cookie("FavoritIds");
+                       ids = ids && JSON.parse(ids);
+                       if ($.isArray(ids)) {
+                           ids = $.grep(ids, function (at) { return at.id != "@product.Id"; });
+                        $.cookie("FavoritIds", JSON.stringify(ids), { expires: 365, path: '/' });
+                           ids.length ? (ids.length > 99 ? $('#favoritesWrap small').text('99+') : $('#favoritesWrap small').text(ids.length)) : $('#favoritesWrap small').addClass('d-none');
+                       }
+                   }
+                else {
+                    $(this).addClass("HeartSelected");
+                       var ids = $.cookie("FavoritIds");
+                       if (!ids) {
+                           ids = [{ id: "@product.Id", atrId: "@product.LinkAtrVal?.Id" }];
+                        $.cookie("FavoritIds", JSON.stringify(ids), { expires: 365, path: '/'  });
+                        $('#favoritesWrap small').removeClass('d-none').text(1);
+
+                       }
+                       else {
+                           ids = JSON.parse(ids);
+                           if ($.isArray(ids)) {
+                               ids.push({ id: "@product.Id", atrId: "@product.LinkAtrVal?.Id" });
+                            $.cookie("FavoritIds", JSON.stringify(ids), { expires: 365, path: '/' });
+                               ids.length > 99 ? $('#favoritesWrap small').text('99+') : $('#favoritesWrap small').text(ids.length);
+                               if (ids.length == 1) $('#favoritesWrap small').removeClass('d-none');
+                           }
+                       }
+                   }
+               });
+
+            $("#buttonAddToBag").click(function () {
+                   var selects = $('.productAtrs select');
+                   var options = $('.productAtrs').find('select option:selected:not([value=""])');
+                   var optionsVal = options.map(function () { return this.value }).toArray();
+                   var productId = "@product.Id";
+                   if (selects.length == options.length) {
+                       var products = $.cookie("ProductList");
+                       products = products && JSON.parse(products);
+                       if ($.isArray(products)) {
+                           var productIsAdd = products.find(_ => _.id == productId);
+                           if (productIsAdd && $(productIsAdd.atrs).not(optionsVal).length == 0 && $(optionsVal).not(productIsAdd.atrs).length == 0) {
+                               productIsAdd.count = productIsAdd.count + 1;
+                               products = $.grep(products, function (at) { return at.id != productId; });
+                               products.push(productIsAdd);
+                        $.cookie("ProductList", JSON.stringify(products), { expires: 365, path: '/' });
+                               prCount = 0;
+                        $.each(products, function () { prCount = prCount + this.count; })
+                        $('#ShoppingBagWrap small').removeClass('d-none').text(prCount > 99 ? '99+' : prCount);
+                           }
+                    else {
+                               products.push({ id: productId, count: 1, atrs: optionsVal });
+                        $.cookie("ProductList", JSON.stringify(products), { expires: 365, path: '/' });
+                               prCount = 0;
+                        $.each(products, function () { prCount = prCount + this.count; })
+                        $('#ShoppingBagWrap small').removeClass('d-none').text(prCount);
+                           }
+                       }
+                else {
+                           products = [{ id: productId, count: 1, atrs: optionsVal }];
+                    $.cookie("ProductList", JSON.stringify(products),{ expires: 365, path: '/' });
+                    $('#ShoppingBagWrap small').removeClass('d-none').text(1);
+                       }
+                   }
+                   else {
+                $('.productAtrs select option:selected[value=""]').parent().addClass('border-danger');
+                $('#atributeColor.textDelete .selectColor').addClass('border-danger');
+                   }
+            });
+
+        });
+
+        function updateAtributes() {
+            if (!atrValues) return;
+                $('.productAtrs select option').attr('disabled', false);
+                $.each($('.productAtrs select'), function (i, sel) {
+                       if ($(sel).val()) {
+                           var temp = $.grep(atrValues, function (c) { return ($.inArray($(sel).val(), c) != -1); });
+
+                        $.each($('.productAtrs select').not(sel).find('option:not([value=""])'), function (j, op) {
+                               var oId = $(op).val();
+                            $.each(temp, function (k, c) {
+                                   if ($.inArray(oId, c) == -1) {
+                                    $(op).attr('disabled', true);
+                                   }
+                                else {
+                                    $(op).attr('disabled', false);
+                                       return false;
+                                   }
+                               });
+                           });
+                       }
+                   });
+                   changeColor();
+            }
+
+        function changeColor() {
+            var options = $('#atributeColor select>option[Value]');
+            $('#atributeColor .atrVal div').removeClass('border-danger');
+            $.each(options, function () {
+                if ($(this).attr('disabled')) {
+                    $('#atributeColor .atrVal[data-id="' + $(this).val() + '"]').addClass('textDelete');
+                }
+                else {
+                    $('#atributeColor .atrVal[data-id="' + $(this).val() + '"]').removeClass('textDelete');
+                }
+            });
+        }
+
+
+    </script>
+}

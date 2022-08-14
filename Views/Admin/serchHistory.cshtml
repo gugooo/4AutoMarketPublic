@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewData["Title"] = "serchHistory";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+@section Style{
+    <style>
+        .serchListWrap {
+            height: 600px;
+            overflow: auto;
+            border: 1px solid rgb(240,240,240);
+        }
+
+            .serchListWrap > div {
+                height: 30px;
+                line-height: 30px;
+                border-bottom: 1px solid rgba(0,0,0,0.15);
+                padding: 0 8px;
+            }
+
+                .serchListWrap > div > span {
+                    float: right;
+                    padding-left: 8px;
+                }
+
+                .serchListWrap > div:hover {
+                    background-color: rgba(0,0,0,0.15);
+                }
+    </style>
+}
+<div class="row">
+    <div class="col-12 mb-3">
+        <h3>Serch History</h3>
+    </div>
+    <div class="col-12 mb-3">
+        <form>
+            <div class="form-inline">
+                <div class="form-row">
+                    @{
+                        DateTime from = ViewBag.from;
+                        DateTime to = @ViewBag.to;
+                    }
+                    <div class="col-auto">
+                        <input class="form-control" name="from" asp-for="@from" />
+                    </div>
+                    <div class="col-auto">
+                        <input class="form-control" name="to" asp-for="@to" />
+                    </div>
+                    <div class="col-auto">
+                        <input class="form-control btn btn-outline-secondary" type="submit" value="Search" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    @{
+        IEnumerable<SerchHistory> sh = (IEnumerable<SerchHistory>)ViewBag.SH;
+        IEnumerable<KeyValuePair<string, int>> shGroup = (IEnumerable<KeyValuePair<string, int>>)ViewBag.SHGroup;
+    }
+    <div class="col-6">
+        <h4>List by time</h4>
+        <div class="serchListWrap">
+            @if (sh != null && sh.Count() > 0)
+            {
+                foreach (var k in sh.Reverse())
+                {
+                    <div><b>@k.Key</b><span>@k.Created.ToString("dd/MM/yyyy HH:mm")</span></div>
+                }
+            }
+
+        </div>
+    </div>
+    <div class="col-6">
+        <h4>List by group</h4>
+        <div class="serchListWrap">
+            @if (shGroup != null && shGroup.Count() > 0)
+            {
+                foreach (var k in shGroup.OrderBy(_ => _.Value).Reverse())
+                {
+                    <div><b>@k.Key</b><span>@k.Value</span></div>
+                }
+            }
+
+        </div>
+    </div>
+</div>
+
+

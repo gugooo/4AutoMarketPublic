@@ -1,0 +1,100 @@
+﻿@model List<_4AutoMarket.ViewModels.Admin.ReviewViewModel>
+    @{
+        ViewData["Title"] = "Review";
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    @section Style{
+        <style>
+            select:hover {
+                border-color: gray;
+            }
+
+            input:hover {
+                border-color: gray;
+            }
+
+            label:hover {
+                cursor: pointer;
+            }
+        </style>
+    }
+
+    <div class="row">
+        <div class="col-12 mb-4"><h3>Reviews</h3></div>
+        <div class="col-12 mb-3">
+            <form asp-action="Review" asp-controller="Admin" method="get">
+                @{ var Serch = (_4AutoMarket.ViewModels.Admin.ReviewSerch)ViewBag.Serch; }
+                <div class="form-row">
+
+                    <div class="col-3">
+                        <input asp-for="@Serch.userId" type="text" class="form-control" placeholder="User Email" />
+                    </div>
+
+                    <div class="col-2">
+                        <select class="form-control" asp-for="@Serch.status">
+                            <option value="">New</option>
+                            <option value="FALSE">Blocked</option>
+                            <option value="TRUE">View</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <select class="form-control" asp-for="@Serch.lastDays">
+                            <option value="7">Last week</option>
+                            <option value="30">Last month</option>
+                            <option value="90">Last 3 month</option>
+                            <option value="180">Last 6 month</option>
+                            <option value="365">Last year</option>
+                            <option value="0">All time</option>
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <input class="btn btn-outline-secondary" type="submit" value="Serch" />
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-12 mb-3">
+            <form asp-action="Review" asp-controller="Admin" method="post">
+                <div class="my-3">
+                    <input class="btn btn-outline-primary float-left px-4" type="submit" value="Save" />
+                    @{ bool setAll = (bool)ViewBag.setAll;}
+                    <label class="ml-5 mt-2"><input asp-for="@setAll" class="form-check-inline" type="checkbox" />Enable all reviews</label>
+                </div>
+                <div style="height:600px; overflow:auto; overflow-x:hidden;">
+                    <table class="w-100 text-center">
+                        <thead class="border-bottom">
+                            <tr class="row">
+                                <th class="col-3">User Email</th>
+                                <th class="col-2">Rating</th>
+                                <th class="col-5">Description</th>
+                                <th class="col-2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="w-100">
+                            @if (Model != null && Model.Count() > 0)
+                            {
+                                @for (int i = 0; i < Model.Count(); i++)
+                                {
+                                    var re = Model.ElementAt(i);
+                                    <tr class="row m-0 py-2 border-bottom">
+                                        <td class="col-3">@re.UserId</td>
+                                        <td class="col-2">@(new String('★', re.Rating) + new String('☆', 5 - re.Rating))</td>
+                                        <td class="col-5">@re.Description</td>
+                                        <td class="col-2">
+                                            <input type="hidden" value="@re.Id" asp-for="@Model[i].Id" />
+                                            <select class="form-control" asp-for="@Model[i].Status">
+                                                <option value="">New</option>
+                                                <option value="TRUE">View</option>
+                                                <option value="FALSE">Block</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+
+    </div>

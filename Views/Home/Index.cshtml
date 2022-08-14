@@ -1,0 +1,236 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    IEnumerable<HomePageSection> _Model = (IEnumerable<HomePageSection>)ViewBag._Model;
+
+
+}
+@section Style{
+    <link href="~/css/Index.css" rel="stylesheet" asp-append-version="true" />
+    <style>
+        .fl_bw {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+    </style>
+}
+
+<div class="row">
+    @if (_Model != null && _Model.Count() == 7)
+    {
+        @if (_Model.ElementAt(0).IsActive && _Model.ElementAt(0).SectionName == "Section 1" && _Model.ElementAt(0).HomePageSectionDatas != null && _Model.ElementAt(0).HomePageSectionDatas.Count() > 0)
+        {
+            var Temp = _Model.ElementAt(0);
+            <div class="col-12 order-@Temp.Position mb-5 p-0 ">
+                <div class="SliderWrap">
+                    @{ bool first = true;}
+                    @foreach (var sd in Temp.HomePageSectionDatas.OrderBy(_ => _._Index))
+                    {
+                        <div class="SliderItem SliderFade @(first ? "d-block" : "")">
+                            @if (first) { first = false; }
+                            <img src="/home/GetIndexImg/@sd.Id/?v=@sd.Added.GetHashCode()" />
+                            <div>
+                                <h3 class='@(sd.TextIsWhith?"text-white":"text-dark")'>@CultureData.GetDefoultName(sd.Title, (string)ViewBag.Culture)</h3>
+                                <p class='@(sd.TextIsWhith?"text-white":"text-dark")'>@CultureData.GetDefoultName(sd.Description, (string)ViewBag.Culture)</p>
+                                <a class="btn btn-light" asp-action="Products" asp-route-id="@sd.Catalog.Id">SHOP NOW</a>
+                            </div>
+                        </div>
+                    }
+                    <a class="prev" onclick="changeSlide(this)">&#10094;</a>
+                    <a class="next" onclick="changeSlide(this)">&#10095;</a>
+                </div>
+            </div>
+        }
+        @if (_Model.ElementAt(1).IsActive && _Model.ElementAt(1).SectionName == "Section 2" && _Model.ElementAt(1).HomePageSectionDatas != null && _Model.ElementAt(1).HomePageSectionDatas.Count() > 0)
+        {
+            var Temp = _Model.ElementAt(1);
+            var TempSD = Temp.HomePageSectionDatas.ElementAt(0);
+            <div class="col-12 order-@Temp.Position mb-5">
+                <div class="container">
+                    <div class="imgBox">
+                        <img src="/home/GetIndexImg/@TempSD.Id/?v=@TempSD.Added.GetHashCode()" />
+                        <div class="text-center position-absolute" style="bottom:10px;">
+                            <h3 class='@(TempSD.TextIsWhith?"text-white":"text-dark")'>@CultureData.GetDefoultName(TempSD.Title, (string)ViewBag.Culture)</h3>
+                            <p class='@(TempSD.TextIsWhith?"text-white":"text-dark")'>
+                                @CultureData.GetDefoultName(TempSD.Description, (string)ViewBag.Culture)
+                            </p>
+                            <a class="btn btn-light" asp-action="Products" asp-route-id="@TempSD.Catalog.Id">SHOP NOW</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (_Model.ElementAt(2).IsActive && _Model.ElementAt(2).SectionName == "Section 3" && _Model.ElementAt(2).HomePageSectionDatas != null && _Model.ElementAt(2).HomePageSectionDatas.Count() > 0)
+        {
+            var Temp = _Model.ElementAt(2);
+            <div class="col-12 order-@Temp.Position mb-5 ">
+                <div class="container-fluid">
+                    <div class="row text-center">
+                        @{ 
+                            int i = 0;
+                        }
+                        @foreach (var sd in Temp.HomePageSectionDatas.OrderBy(_ => _._Index))
+                        {
+                            @switch (i)
+                            {
+                                case 0: <div class="col-12 text-left mt-5 border-bottom"><h1>Hyundai Sonata</h1></div>
+                                    break;
+                                case 4: <div class="col-12 text-left mt-5 border-bottom"><h1>Hyundai Elantra</h1></div>
+                                    break;
+                                case 8: <div class="col-12 text-left mt-5 border-bottom"><h1>Kia Optima</h1></div>
+                                    break;
+                                case 12: <div class="col-12 text-left mt-5 border-bottom"><h1>Kia Forte/Cerato</h1></div>
+                                    break;
+                                case 15: <div class="col-12 text-left mt-5 border-bottom"><h1>Toyota</h1></div>
+                                    break;
+                            }
+                            <div class="col-12 col-md-3 mt-5">
+                                <div class="fl_bw">
+                                    <a class="ImgHover" asp-action="Products" asp-route-id="@sd.Catalog.Id">
+                                        <img style="width:100%" src="/home/GetIndexImg/@sd.Id/?v=@sd.Added.GetHashCode()" />
+                                    </a>
+                                    <a class="btn btn-outline-dark" asp-action="Products" asp-route-id="@sd.Catalog.Id">@CultureData.GetDefoultName(sd.Title, (string)ViewBag.Culture)</a>
+                                </div>
+                            </div>
+                            i++;
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        @if (_Model.ElementAt(3).IsActive && _Model.ElementAt(3).SectionName == "Section 4" && _Model.ElementAt(3).HomePageSectionDatas != null && _Model.ElementAt(3).HomePageSectionDatas.Count() > 1)
+        {
+            var Temp = _Model.ElementAt(3);
+                            var sdSort = Temp.HomePageSectionDatas.OrderBy(_ => _._Index);
+                            var sd1 = sdSort.ElementAt(0);
+                            var sd2 = sdSort.ElementAt(1);
+            <div class="col-12 order-@Temp.Position mb-5 ">
+                <div class="container text-center">
+                    <div class="float-left imgBox halfBox">
+                        <img src="/home/GetIndexImg/@sd1.Id/?v=@sd1.Added.GetHashCode()" />
+                        <div>
+                            <h3 class="@(sd1.TextIsWhith?"text-white":"text-dark")">@CultureData.GetDefoultName(sd1.Title, (string)ViewBag.Culture)</h3>
+                            <a class="btn btn-light" asp-action="Products" asp-route-id="@sd1.Catalog.Id">SHOP NOW</a>
+                        </div>
+                    </div>
+                    <div class="float-right imgBox halfBox">
+                        <img src="/home/GetIndexImg/@sd2.Id/?v=@sd2.Added.GetHashCode()" />
+                        <div>
+                            <h3 class="@(sd2.TextIsWhith?"text-white":"text-dark")">@CultureData.GetDefoultName(sd2.Title, (string)ViewBag.Culture)</h3>
+                            <a class="btn btn-light" asp-action="Products" asp-route-id="@sd2.Catalog.Id">SHOP NOW</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (_Model.ElementAt(4).IsActive && _Model.ElementAt(4).SectionName == "Section 5" && _Model.ElementAt(4).HomePageSectionDatas != null && _Model.ElementAt(4).HomePageSectionDatas.Count() > 2)
+        {
+            var Temp = _Model.ElementAt(4);
+                            var sdSort = Temp.HomePageSectionDatas.OrderBy(_ => _._Index);
+                            var sd1 = sdSort.ElementAt(0);
+                            var sd2 = sdSort.ElementAt(1);
+                            var sd3 = sdSort.ElementAt(2);
+            <div class="col-12 order-@Temp.Position mb-5 ">
+                <div class="container text-center">
+                    <div class="imgBox halfBox float-left">
+                        <img src="/home/GetIndexImg/@sd1.Id/?v=@sd1.Added.GetHashCode()" />
+                        <div>
+                            <h3 class="@(sd1.TextIsWhith?"text-white":"text-dark")">@CultureData.GetDefoultName(sd1.Title, (string)ViewBag.Culture)</h3>
+                            <a asp-action="Products" asp-route-id="@sd1.Catalog.Id" class="btn btn-light">SHOP NOW</a>
+                        </div>
+                    </div>
+                    <div class="fourthBox float-right">
+                        <div class="imgBox m-0">
+                            <img src="/home/GetIndexImg/@sd2.Id/?v=@sd2.Added.GetHashCode()" />
+                            <div>
+                                <h3 class="@(sd2.TextIsWhith?"text-white":"text-dark")">@CultureData.GetDefoultName(sd2.Title, (string)ViewBag.Culture)</h3>
+                                <a asp-action="Products" asp-route-id="@sd2.Catalog.Id" class="btn btn-light">SHOP NOW</a>
+                            </div>
+                        </div>
+                        <div class="imgBox">
+                            <img src="/home/GetIndexImg/@sd3.Id/?v=@sd3.Added.GetHashCode()" />
+                            <div>
+                                <h3 class="@(sd3.TextIsWhith?"text-white":"text-dark")">@CultureData.GetDefoultName(sd3.Title, (string)ViewBag.Culture)</h3>
+                                <a asp-action="Products" asp-route-id="@sd3.Catalog.Id" class="btn btn-light">SHOP NOW</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (_Model.ElementAt(5).IsActive && _Model.ElementAt(5).SectionName == "Section 6" && _Model.ElementAt(5).HomePageSectionDatas != null && _Model.ElementAt(5).HomePageSectionDatas.Count() > 8)
+        {
+            var Temp = _Model.ElementAt(5);
+                            var sdSort = Temp.HomePageSectionDatas.OrderBy(_ => _._Index);
+            <div class="col-12 order-@Temp.Position mb-5 ">
+                <div class="container">
+                    <div class="squareBox">
+                        <div class="imgWrap shadow">
+                            <img src="/home/GetIndexImg/@sdSort.ElementAt(0).Id/?v=@sdSort.ElementAt(0).Added.GetHashCode()" />
+                        </div>
+                        <div class="SB_textWrap">
+                            <h3 class="@(sdSort.ElementAt(0).TextIsWhith?"text-white":"text-dark")">@CultureData.GetDefoultName(sdSort.ElementAt(0).Title, (string)ViewBag.Culture)</h3>
+                            <a asp-action="Products" asp-route-id="@sdSort.ElementAt(0).Catalog.Id" class="btn btn-light">SHOP NOW</a>
+                        </div>
+                    </div>
+                    <div class="squareBox4 ">
+                        @for (int i = 1; i < 5; i++)
+                        {
+                            <div>
+                                <a asp-action="Products" asp-route-id="@sdSort.ElementAt(i).Catalog.Id">
+                                    <img src="/home/GetIndexImg/@sdSort.ElementAt(i).Id/?v=@sdSort.ElementAt(i).Added.GetHashCode()" />
+                                    <div class="@(@sdSort.ElementAt(i).TextIsWhith?"text-white":"text-dark")">@CultureData.GetDefoultName(sdSort.ElementAt(i).Title, (string)ViewBag.Culture)</div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                    <div class="squareBox4 ">
+                        @for (int i = 5; i < 9; i++)
+                        {
+                            <div>
+                                <a asp-action="Products" asp-route-id="@sdSort.ElementAt(i).Catalog.Id">
+                                    <img src="/home/GetIndexImg/@sdSort.ElementAt(i).Id/?v=@sdSort.ElementAt(i).Added.GetHashCode()" />
+                                    <div class="@(@sdSort.ElementAt(i).TextIsWhith?"text-white":"text-dark")">@CultureData.GetDefoultName(sdSort.ElementAt(i).Title, (string)ViewBag.Culture)</div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        @if (_Model.ElementAt(6).IsActive && _Model.ElementAt(6).SectionName == "Section 7" && _Model.ElementAt(6).HomePageSectionDatas != null && _Model.ElementAt(6).HomePageSectionDatas.Count() > 0 && (IEnumerable<Product>)ViewBag.Products != null && ((IEnumerable<Product>)ViewBag.Products).Count() > 0)
+        {
+            IEnumerable<Product> Products = ViewBag.Products;
+                            var Temp = _Model.ElementAt(6);
+            <div class="col-12 order-@Temp.Position mb-5 ">
+                <div class="container">
+                    <div class="books_Wrap">
+                        <h2>@CultureData.GetDefoultName(Temp.HomePageSectionDatas.ElementAt(0).Title, (string)ViewBag.Culture)</h2>
+
+                        <div class="Slider5Wrap">
+                            <div style="width:1100px;overflow:hidden;">
+                                @foreach (var pr in Products)
+                                {
+                                    var imgId = pr?.ProductTypes?.Where(_ => _.IsMine).FirstOrDefault()?.Images?.OrderBy(_ => _._Index).FirstOrDefault();
+                                    <div class="SliderItem SliderFade d-inline-block">
+                                        <a class="btn btn-light" asp-action="Product" asp-route-id="@pr.Id">
+                                            <img src="@(imgId!=null?"/home/GetProductImg/"+imgId.Id :"//:0")" />
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                            <a class="prev" onclick="changeSlide5(this)">&#10094;</a>
+                            <a class="next" onclick="changeSlide5(this)">&#10095;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+
+    }
+
+</div>
